@@ -1,0 +1,266 @@
+---
+title: Análise Financeira
+sidebar_position: 4
+slug: /analise-financeira
+---
+
+## Objetivo
+
+&emsp;Esta análise financeira tem como objetivo estimar os custos envolvidos no desenvolvimento e operação de um sistema de localização de veículos roubados por meio de drones, a ser implementado internamente pela PIER Seguradora. A solução utiliza drones para capturar imagens de veículos em vias públicas, combinadas com tecnologias de visão computacional para identificação automática de placas e verificação em bases de dados, com foco em aumentar a taxa de recuperação de veículos.
+
+&emsp;O escopo deste documento consolida o investimento inicial (CAPEX), gasto mensal (OPEX) e cenários de retorno (payback/ROI), com as limitações descritas na seção de premissas.
+
+## Premissas
+
+- Valores estimados em reais (R$) e sujeitos a variações de mercado.
+- Desenvolvimento: equipe de 7 pessoas, trabalhando por 3 meses.
+- Operação: 3 operadores e 3 analistas, e 3 drones em operação (+ 1 drone reserva).
+- Hardware: 1 notebook por membro da equipe de desenvolvimento + 1 workstation ML.
+- Os custos de salários não incluem encargos/benefícios, que podem aumentar o custo total.
+- Custos pequenos e custos de infraestrutura/estrutura ainda não definidos não foram contabilizados nesta Sprint 1.
+- Ferramentas/licenças de desenvolvimento e operação também não foram metrificadas nesta Sprint 1.
+
+## OPEX
+
+### Salários da operação do drone
+
+&emsp;Para os profissionais envolvidos na operação dos drones, foram considerados os cargos de operador de drone e analista de dados, responsáveis pela execução das atividades em campo e pela análise/triagem das informações coletadas.
+
+| Cargo                      | Quantidade | Custo unit. mensal (R$) | Custo total mensal (R$) |
+| -------------------------- | ---------: | ----------------------: | ----------------------: |
+| Operador do drone          |          3 |                   3.000 |                   9.000 |
+| Analista de dados do drone |          3 |                   3.250 |                   9.750 |
+| Total                      |          — |                       — |                  18.750 |
+
+### Riscos
+
+&emsp;Foram considerados os principais riscos operacionais associados ao uso de drones em ambiente urbano, com destaque para a possibilidade de perda ou queda dos equipamentos. Com base em estimativas de mercado, foi adotada uma taxa de perda entre 5% e 15% da frota ao mês, refletindo cenários de uso intensivo. Além disso, foi incluído um fundo de contingência equivalente a 20% dos custos operacionais, com o objetivo de cobrir eventos imprevistos, como falhas técnicas, interrupções na operação ou despesas emergenciais.
+
+&emsp;Na estimativa de gasto mensal, os riscos operacionais são tratados via fundo de contingência (20%).
+
+### Taxas administrativas
+
+&emsp;As taxas administrativas representam os custos indiretos necessários para viabilizar a operação do projeto dentro da estrutura da empresa. Foram considerados gastos com serviços bancários, processamento de pagamentos e encargos gerais, além de uma estimativa de impostos correspondente a 10% dos custos operacionais. Esses valores garantem uma visão mais realista do custo total, incorporando despesas que, embora não estejam diretamente ligadas à operação dos drones, são essenciais para o funcionamento do projeto.
+
+### Custos de infraestrutura e ferramentas (fora do escopo na Sprint 1)
+
+&emsp;Assim como no documento de referência existem custos detalhados de infraestrutura, impostos e manutenção, neste projeto alguns itens não foram incluídos nesta Sprint 1 por ainda estarem em definição.
+
+&emsp;Para facilitar a avaliação (e evitar a inserção de números sem base), os principais pontos esperados foram listados abaixo como a definir.
+
+#### Infraestrutura (a definir)
+
+&emsp;Itens típicos:
+
+- Banco de dados e armazenamento de imagens/vídeos.
+- Computação (treino/execução de modelos), rede, observabilidade e monitoramento.
+- Backup, políticas de retenção e segurança.
+
+#### Ferramentas e licenças (a definir)
+
+&emsp;Itens típicos:
+
+- Ferramentas de gestão (ex.: issue tracking), CI/CD e repositórios.
+- Segurança (ex.: varredura de vulnerabilidades, secrets management).
+- Licenças específicas para edição/análise de vídeo, quando aplicável.
+
+#### Encargos, benefícios e regime de contratação (a definir)
+
+&emsp;Nesta Sprint 1, os salários foram considerados como valores nominais (sem encargos/benefícios). Para um cálculo mais realista, é necessário definir:
+
+- Regime (CLT/PJ/terceiros) e percentuais de encargos/benefícios.
+- Custos indiretos de gestão, férias/13º, rotatividade e treinamento.
+
+#### Impostos e enquadramento (a definir)
+
+&emsp;Nesta Sprint 1 foi usado um imposto simplificado (10%) apenas como aproximação sobre o subtotal operacional. Em uma versão final, recomenda-se revisar:
+
+- Enquadramento tributário aplicável e base de incidência.
+- Diferença entre custos internos (centro de custo) vs. precificação/contratação de serviço.
+
+#### Manutenção e suporte (a definir)
+
+&emsp;Itens típicos:
+
+- Suporte técnico, correções, evolução e monitoramento do sistema.
+- Custos recorrentes de infraestrutura (seção 3.4.1) e de licenças (seção 3.4.2).
+- Auditorias e conformidade (ex.: LGPD e segurança).
+
+#### Lucro/markup (a definir)
+
+&emsp;Como esta análise assume implementação interna, não foi considerado lucro/markup. O retorno foi modelado como benefício operacional (prejuízo evitado por recuperação adicional de veículos), e não como receita de venda.
+
+&emsp;Se o projeto for tratado como serviço/produto com precificação (ex.: chargeback interno ou venda para terceiros), é necessário definir:
+
+- Modelo de precificação (ex.: custo + markup) e percentual.
+- Se o markup entra como receita (ou benefício financeiro) e quais impostos/incidências se aplicam.
+
+&emsp;Quando definidos, os itens das seções 3.4.1–3.4.5 devem ser incorporados ao OPEX/CAPEX e o item 3.4.6 deve ser incorporado às premissas de retorno, podendo alterar payback/ROI.
+
+### Gasto mensal
+
+&emsp;O gasto mensal foi estimado considerando os custos recorrentes da operação, incluindo salários, manutenção/uso dos drones, impostos e reserva de contingência (que também cobre riscos operacionais). Esse valor é essencial para avaliar a sustentabilidade financeira do projeto ao longo do tempo.
+
+&emsp;O custo mensal por drone (R$ 150) é uma estimativa que engloba itens operacionais recorrentes e de desgaste, tais como manutenção preventiva e corretiva, reposição parcial de peças (hélices, parafusos), amortização proporcional de baterias e componentes, custos de recarga e logística local, além de pequenas despesas administrativas e de seguro/autorizações quando aplicáveis. 
+
+| Item                        | Quantidade | Custo unit. (R$) | Custo total (R$) | Observação                      |
+| --------------------------- | ---------: | ---------------: | ---------------: | ------------------------------- |
+| Operadores                  |          3 |            3.000 |            9.000 | —                               |
+| Analistas                   |          3 |            3.250 |            9.750 | —                               |
+| Drones (custo mensal)       |          3 |              150 |              450 | —                               |
+| Subtotal operacional        |          — |                — |           19.200 | Operadores + Analistas + Drones |
+| Imposto (10%)               |          — |                — |            1.920 | 10% do subtotal                 |
+| Fundo de contingência (20%) |          — |                — |            4.224 | 20% de (subtotal + imposto)     |
+| Total                       |          — |                — |           25.344 | —                               |
+
+## CAPEX
+
+### Salários da equipe de desenvolvimento
+
+&emsp;Em uma equipe de 7 pessoas para o desenvolvimento do projeto, foram considerados cargos como Product Owner, engenheiro de IA, desenvolvedores e QA, que compõem a equipe técnica responsável pelo sistema.
+
+| Cargo                  | Quantidade | Custo unit. mensal (R$) | Custo total mensal (R$) |
+| ---------------------- | ---------: | ----------------------: | ----------------------: |
+| Product Owner          |          1 |                  10.500 |                  10.500 |
+| Engenheiro de IA       |          1 |                  10.000 |                  10.000 |
+| DevOps                 |          1 |                   6.750 |                   6.750 |
+| Desenvolvedor backend  |          2 |                   6.500 |                  13.000 |
+| Desenvolvedor frontend |          1 |                   5.800 |                   5.800 |
+| Quality Assurance      |          1 |                   3.800 |                   3.800 |
+| Total                  |          — |                       — |                  49.850 |
+| Total (3 meses)        |          — |                       — |                 149.550 |
+
+### Custo drone
+
+&emsp;Com base nos preços de mercado de drones de entrada, como o DJI Tello, foram estimados os custos relacionados à aquisição, manutenção e operação dos equipamentos. Também foram considerados itens essenciais como baterias e hélices reservas, além de uma estimativa de custo mensal por drone levando em conta desgaste e reposição.
+
+| Item                 | Quantidade | Custo unit. (R$) | Custo total (R$) | Fonte/Observação                                                                                                                       |
+| -------------------- | ---------: | ---------------: | ---------------: | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Drone DJI Tello      |          1 |              700 |              700 | <a href="https://www.mercadolivre.com.br/drone-ryze-dji-tello-2019-com-camera-hd-branco-1-bateria/up/MLBU3863383738">Mercado Livre</a> |
+| Jogo de Hélices      |          1 |              100 |              100 | <a href="https://www.mercadolivre.com.br/jogo-de-helices-dji-tello-original/up/MLBU1256930987">Mercado Livre</a>                       |
+| Bateria reserva      |          1 |              350 |              350 | <a href="https://www.mercadolivre.com.br/bateria-original-drone-dji-ryze-tello/up/MLBU1398873637">Mercado Livre</a>                    |
+| Subtotal (por drone) |          — |                — |            1.150 | —                                                                                                                                      |
+
+### Hardware e equipamentos
+
+&emsp;Foram considerados equipamentos essenciais para o desenvolvimento do sistema, incluindo 1 notebook por membro da equipe de desenvolvimento (7 notebooks) e 1 workstation dedicada para tarefas de inteligência artificial. Enquanto os notebooks atendem às atividades gerais de desenvolvimento e gestão, a workstation com GPU permite o treinamento e execução de modelos de visão computacional de forma mais eficiente. Os custos foram estimados com base em preços de mercado de varejistas como Amazon e Pichau, representando um investimento inicial necessário para suportar a infraestrutura do projeto.
+
+| Item                     | Especificações                                        | Quantidade | Custo unit. (R$) | Custo total (R$) | Fonte                                                                                                                                        |
+| ------------------------ | ----------------------------------------------------- | ---------: | ---------------: | ---------------: | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Notebook desenvolvimento | Ryzen 7 5700U, 16GB RAM, 1TB SSD                      |          7 |            3.780 |           26.460 | <a href="https://www.amazon.com.br/IdeaPick-Laptop-VigoBook-polegadas-impress%C3%A3o/dp/B0FNMSRQ5K" >Amazon</a>                              |
+| Workstation ML           | i5-14400F, RTX 5060 Ti 16 GB VRAM, 16 GB RAM, 1TB SSD |          1 |            8.111 |            8.111 | <a href="https://www.pichau.com.br/pc-gamer-pichau-shax-iv-intel-i5-14400f-geforce-rtx-5060-ti-16gb-16gb-ddr4-ssd-m-2-1tb-61624" >Pichau</a> |
+| Total                    | —                                                     |          — |                — |           34.571 | —                                                                                                                                            |
+
+### Custo jurídico (setup)
+
+&emsp;Considerando a necessidade de operação dentro das normas legais brasileiras, foram incluídos custos relacionados à consultoria jurídica especializada, adequação à LGPD e registros obrigatórios junto a órgãos reguladores como a ANAC. Esses elementos são fundamentais para garantir a conformidade e viabilidade do projeto.
+
+| Descrição                                  | Quantidade | Custo unit. (R$) | Custo total (R$) |
+| ------------------------------------------ | ---------: | ---------------: | ---------------: |
+| Consultoria jurídica especializada (setup) |          1 |           10.000 |           10.000 |
+| Adequação com a LGPD                       |          1 |           12.000 |           12.000 |
+| Registro na ANAC                           |          1 |              200 |              200 |
+| Total                                      |          — |                — |           22.200 |
+
+### Investimento inicial
+
+&emsp;O investimento inicial foi calculado com base nos custos necessários para viabilizar o início da operação, incluindo aquisição de drones, compra de acessórios e despesas jurídicas iniciais. Esse valor representa o capital necessário antes do sistema entrar em funcionamento.
+
+| Item                              | Quantidade | Custo unit. (R$) | Custo total (R$) |
+| --------------------------------- | ---------: | ---------------: | ---------------: |
+| Kits drone (3 ativos + 1 reserva) |          4 |            1.150 |            4.600 |
+| Jurídico (setup)                  |          1 |           22.200 |           22.200 |
+| Desenvolvimento (3 meses)         |          1 |          149.550 |          149.550 |
+| Equipamento de desenvolvimento    |          1 |           34.571 |           34.571 |
+| Total                             |          — |                — |          210.921 |
+
+## Benefícios, payback e ROI
+
+&emsp;Para se adequar completamente ao modelo de entrega, o retorno deve ser estimado a partir do benefício incremental gerado pela recuperação adicional de veículos (ex.: redução de prejuízos com sinistros para a PIER Seguradora).
+
+&emsp;Os cenários abaixo usam valores estimados para `N` e `V` (ex.: com base em referências públicas como a Tabela FIPE), apenas para obter uma ordem de grandeza. Como se trata de um benefício de negócio, recomenda-se recalibrar `N` e `V` com dados internos (sinistros, histórico de recuperação, custo médio líquido por evento) antes de tomada de decisão final.
+
+### Variáveis
+
+- `N` = veículos recuperados adicionais por mês (incremental). Premissa a definir/validar com dados internos (histórico de veículos recuperados e taxa incremental esperada com uso de drones).
+- `V` = prejuízo médio evitado por veículo recuperado (R$). O preço foi estimado com base na faixa de valor (Tabela FIPE) dos carros mais roubados em São Paulo. Para representar impacto de danos e mix de veículos, foram simulados três valores:
+  - (1) R$ 35.000 (conservador, carro com danos)
+  - (2) R$ 40.000 (base, pequenos danos e/ou carros mais baratos)
+  - (3) R$ 45.000 (otimista, carros mais caros e/ou sem danos)
+- `C_mensal` = custo mensal total do projeto (OPEX). Nesta Sprint 1: R$ 25.344 (sem encargos e sem infraestrutura/ferramentas)
+- `I_inicial` = investimento inicial. Nesta Sprint 1: R$ 210.921
+
+&emsp;Observação: o ROI é altamente sensível a `N` e `V`. Pequenas variações nessas premissas (ou a inclusão de custos fora do escopo, como infraestrutura, ferramentas e encargos) podem alterar significativamente payback e ROI.
+
+### Fórmulas
+
+```
+B = N * V
+B_liq = B - C_mensal
+Payback_meses = I_inicial / B_liq          (válido apenas se B_liq > 0)
+ROI_anual = ((12 * B_liq) - I_inicial) / I_inicial
+
+Ponto_de_equilibrio (break-even): N >= C_mensal / V
+```
+
+### Quadro de cenários
+
+| Cenário     | N (veículos/mês) | V (R$/veículo) | B = N \* V (R$/mês) | B_liq = B - C_mensal (R$/mês) | Payback (meses) | ROI anual |
+| ----------- | ---------------: | -------------: | ------------------: | ----------------------------: | --------------: | --------: |
+| Conservador |                2 |         35.000 |              70.000 |                        44.656 |            4,72 |    154,1% |
+| Base        |                2 |         40.000 |              80.000 |                        54.656 |            3,85 |    210,9% |
+| Otimista    |                2 |         45.000 |              90.000 |                        64.656 |            3,26 |    267,8% |
+
+### Interpretação e break-even point
+
+&emsp;Os cenários acima assumem apenas **2 recuperações adicionais por mês**. Mesmo assim, o payback fica entre **3,38 e 4,89 meses** (dependendo do valor médio evitado por veículo `V`).
+
+&emsp;Para referência, o break-even ocorre quando `B_liq > 0`, ou seja, quando `N >= C_mensal / V`.
+
+| V (R$/veículo) | N mínimo (veículos/mês) | Interpretação prática |
+| -------------: | ----------------------: | --------------------- |
+|         35.000 |                    0,72 | ~ 1 veículo/mês       |
+|         40.000 |                    0,63 | ~ 1 veículo/mês       |
+|         45.000 |                    0,56 | ~ 1 veículo/mês       |
+
+&emsp;Ou seja: se o sistema gerar ~1 recuperação adicional por mês, já tende a cobrir o OPEX estimado.
+
+### Sensibilidade
+
+&emsp;Como parte relevante dos custos recorrentes ainda está fora do escopo (seção 3.4), foi aplicado um teste de sensibilidade no cenário Base (`N = 2`, `V = 40.000`) variando `C_mensal` em +30% e +60%.
+
+| Cenário (OPEX) | C_mensal (R$/mês) | B_liq (R$/mês) | Payback (meses) | ROI anual |
+| -------------- | ----------------: | -------------: | --------------: | --------: |
+| Base (0%)      |            25.344 |         54.656 |            3,85 |    210,9% |
+| Base (+30%)    |            32.947 |         47.053 |            4,48 |    167,8% |
+| Base (+60%)    |            40.550 |         39.450 |            5,34 |    124,5% |
+
+## Conclusão
+
+&emsp;A partir dos custos levantados, é possível observar que o projeto apresenta um investimento inicial relativamente baixo em termos de infraestrutura física, concentrando-se principalmente em despesas com equipe e desenvolvimento tecnológico. O gasto mensal, por sua vez, é majoritariamente composto por custos de pessoal, evidenciando que o fator humano é o principal responsável pela sustentação da operação, enquanto os drones representam uma parcela reduzida do custo total.
+
+&emsp;Dessa forma, a viabilidade do projeto está diretamente ligada à sua capacidade de gerar redução de prejuízos com sinistros, por meio do aumento na taxa de recuperação de veículos. Caso o sistema consiga recuperar um volume suficiente de veículos que compense os custos operacionais mensais, a solução se torna financeiramente justificável. Assim, esta análise fornece uma base sólida para a tomada de decisão, permitindo avaliar o equilíbrio entre investimento, custo recorrente e benefícios esperados, além de orientar possíveis ajustes para otimização do projeto.
+
+&emsp;Com os ajustes atuais, o investimento inicial estimado é de R$ 210.921 e, nos cenários simulados com `N = 2` e `V` entre R$ 35.000 e R$ 45.000, o payback fica entre 3,26 e 4,72 meses. O principal direcionador do resultado é a premissa `N` (recuperações adicionais por mês), que deve ser validada com dados internos e, idealmente, com um piloto operacional antes de escalar.
+
+&emsp;Como próximo passo (sprint futura), recomenda-se preencher os cenários de benefícios com dados históricos internos e incorporar os custos de infraestrutura e ferramentas quando definidos, para refinar payback e ROI.
+
+## Referências
+
+&emsp;GLASSDOOR. _Glassdoor Brasil_. 2026. Disponível em: [https://www.glassdoor.com.br/](https://www.glassdoor.com.br/). Acesso em: 28 abr. 2026.
+
+&emsp;MERCADO LIVRE. _DJI Tello: resultados de busca_. 2026. Disponível em: [https://lista.mercadolivre.com.br/dji-tello/](https://lista.mercadolivre.com.br/dji-tello/). Acesso em: 28 abr. 2026.
+
+&emsp;AMAZON BRASIL. _Amazon.com.br_. 2026. Disponível em: [https://www.amazon.com.br/](https://www.amazon.com.br/). Acesso em: 28 abr. 2026.
+
+&emsp;PICHAU. _Pichau Informática_. 2026. Disponível em: [https://www.pichau.com.br/](https://www.pichau.com.br/). Acesso em: 28 abr. 2026.
+
+&emsp;BRASIL. Governo Federal. _Cadastrar drone básico_. 2025. Disponível em: [https://www.gov.br/pt-br/servicos/cadastrar-drone-basico/](https://www.gov.br/pt-br/servicos/cadastrar-drone-basico/). Acesso em: 28 abr. 2026.
+
+&emsp;COMPLIANCE ENFORCEMENT. _LGPD: custos de adequação_. 2025. Disponível em: [https://complianceenforcement.com.br/quanto-custa-adequar-sua-empresa-a-lgpd-guia-completo-de-investimento-2025/](https://complianceenforcement.com.br/quanto-custa-adequar-sua-empresa-a-lgpd-guia-completo-de-investimento-2025/). Acesso em: 29 abr. 2026.
+
+&emsp;FUNDAÇÃO INSTITUTO DE PESQUISAS ECONÔMICAS (FIPE). _Tabela FIPE_. 2026. Disponível em: [https://veiculos.fipe.org.br/](https://veiculos.fipe.org.br/). Acesso em: 29 abr. 2026.
+
+ITURAN. _Roubos de carros em 2025: dados atualizados e como evitar prejuízos (matéria)_. 2025. Disponível em: [https://ituran.com.br/roubos-de-carros/](https://ituran.com.br/roubos-de-carros/). Acesso em: 29 abr. 2026.
+
+HARVARD BUSINESS SCHOOL ONLINE. _How to Calculate ROI for a Project_. 2020. Disponível em: [https://online.hbs.edu/blog/post/how-to-calculate-roi-for-a-project](https://online.hbs.edu/blog/post/how-to-calculate-roi-for-a-project). Acesso em: 29 abr. 2026.

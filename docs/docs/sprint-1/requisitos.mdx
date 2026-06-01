@@ -1,0 +1,140 @@
+---
+title: Requisitos
+sidebar_position: 5
+---
+
+&emsp; Requisitos são descrições dos serviços oferecidos pelo sistema desenvolvido e das restrições e métricas sob as quais ele deve operar. Eles derivam diretamente das dores identificadas na operação de sinistros da Pier, dores essas associadas às nossas personas identificadas, ou seja, aos afetados pela nossa solução, e servem como o principal critério de metrificação de sucesso para a validação final do projeto. Além disso, esses requisitos também se fundamentam na [tese](tese.mdx) proposta, que orienta a construção de uma solução baseada em visão computacional para aumentar a eficiência na recuperação de veículos.
+
+&emsp; A estruturação dos requisitos é a base que compõe as necessidades principais da Pier Seguradora em termos técnicos. Enquanto a Proposta de Valor define o propósito do projeto e a Análise Financeira valida sua viabilidade econômica, os requisitos determinam a maneira como a solução deverá se comportar para atingir tais objetivos. Nesse contexto, eles traduzem, em termos técnicos e operacionais, os princípios estabelecidos pela [tese](tese.mdx), garantindo que a Arquitetura da Informação proposta seja materializada com precisão e eficiência.
+
+&emsp; Nesta seção, a solução é decomposta em duas frentes complementares:
+
+- Requisitos Funcionais  
+- Requisitos Não Funcionais  
+
+---
+
+## Requisitos Funcionais
+
+&emsp; Os Requisitos Funcionais descrevem as funções específicas que o sistema deve ser capaz de realizar. Eles representam as funcionalidades práticas que serão percebidas pelo usuário e pela Pier Seguradora.
+
+&emsp; Neste projeto, os requisitos funcionais mapeiam todo o ciclo de vida do dado: desde a detecção autônoma realizada pela visão computacional embarcada no drone em operação, passando pelo processamento remoto de imagens no servidor, até a entrega final das informações à API de match de sinistros da própria seguradora.
+
+&emsp; Cada requisito listado abaixo foi selecionado para garantir que a solução otimize etapas da busca por carros sinistrados, a fim de aumentar a eficácia na identificação de veículos roubados ou furtados.
+
+### RF01 - Detecção autônoma de veículos
+
+&emsp; O drone deve ser capaz de identificar a presença de um veículo dentro do seu campo de visão de forma autônoma, utilizando visão computacional integrada. Com isso, otimiza-se o processo de varredura, reduzindo a dependência de buscas puramente manuais e aumentando a eficiência operacional em comparação ao modelo atual da Pier.
+
+### RF02 - Captura da foto e da localização geográfica dos veículos encontrados
+
+&emsp; Ao detectar um veículo, o sistema aéreo deve capturar uma imagem de alta resolução para registrar informações como cor, modelo e, prioritariamente, a placa. Simultaneamente, o sistema deve associar à imagem as coordenadas de latitude e longitude (GPS) do momento da captura. Neste momento, o drone não será responsável pela tradução das placas, apenas pela localização das mesmas e captura da imagem referente, bem como as coordenadas de longitude e latitude da foto.
+
+### RF03 - Envio de dados captados pelo drone para o servidor
+
+&emsp; O drone deve ser capaz de enviar seus dados registrados (foto do veículo e localização) para o servidor. Ele não processará nenhuma das informações captadas, apenas servirá como ponto de coleta e envio de dados.
+
+### RF04 - Extração da leitura de placas
+
+&emsp; O servidor deve ser capaz de receber os dados enviados pelo sistema do drone, processar as imagens e extrair a informação da sequência alfanumérica das placas presentes, transformando-a em um texto no formato coerente utilizado pela API interna da Pier para verificação de carros sinistrados.
+
+### RF05 - Visualização do controle do drone
+
+&emsp; A interface utilizada pelo operador do drone deve exibir a transmissão de imagem da câmera do drone. Dessa forma, o operador conseguirá visualizar o ponto de vista da operação, utilizando essas informações como guia para a execução do plano de voo.
+
+### RF06 - Mapa de calor dos locais de desova de veículos
+
+&emsp; A interface do coordenador da operação do drone deve exibir um mapa geográfico da região de operação integrado a uma camada de mapa de calor, que identifique as áreas críticas de desova de veículos. Essas zonas de calor devem ser geradas a partir de dados históricos de sinistros e localizações de recuperações anteriores, permitindo identificar padrões geográficos de criminalidade.
+
+### RF07 - Envio de dados para a API interna da Pier
+
+&emsp; O servidor, ao estruturar todos os dados recebidos em formato de texto, deverá realizar a comunicação, em tempo real, com a API interna da Pier e enviar os dados coletados (placa e localização geográfica dos veículos) para validação com a base de dados de veículos sinistrados por roubo ou furto.
+
+**Tabela 1: Arquitetura do Pipeline de Dados**
+
+&emsp; Esta tabela resume como os requisitos funcionais se distribuem ao longo da solução proposta.
+
+| Camada da Solução | Requisitos Funcionais | Descrição do Papel no Projeto |
+|------------------|----------------------|------------------------------|
+| Edge Computing (Computação de Borda) | RF01 e RF02 | Computação embarcada no drone para detecção autônoma de veículos e coleta de referências geográficas. |
+| Transmissão de dados | RF03 | Protocolo de envio de dados brutos (imagem e telemetria) do drone para o servidor. |
+| Nuvem / Servidor | RF04 e RF07 | Processamento de visão computacional (OCR - Reconhecimento Óptico de Caracteres) e integração com a API interna de sinistros da Pier. |
+| Interface (UI / UX) | RF05 e RF06 | Visualização da operação em tempo real e camada de informações geográficas (Mapa de Calor). |
+
+---
+
+## Requisitos Não Funcionais
+
+&emsp; Os Requisitos Não Funcionais definem os critérios de qualidade, as restrições e as propriedades de desempenho que o sistema deve apresentar. Eles não descrevem funcionalidades específicas, mas determinam o nível de eficiência, segurança e confiabilidade com que os requisitos funcionais devem ser executados.
+
+&emsp; Nesta seção, são estabelecidas as métricas de sucesso que validam a eficácia da visão computacional e da arquitetura de dados. Esses requisitos asseguram que o sistema seja escalável, seguro e de baixa latência, garantindo aplicabilidade real do projeto e impacto direto no aumento de veículos encontrados.
+
+### RNF01 - Eficiência na detecção e processamento de dados
+
+&emsp; O processo existente (desde a detecção do veículo, envio das informações do drone para o servidor, processamento dos dados e comunicação com a API interna da Pier que faz a verificação automática com a base de dados de carros sinistrados por roubo/furto e notifica diretamente o time de operações da seguradora) deve ter duração máxima de 3 minutos, assim, tendo como objetivo minimizar a latência e garantir a agilidade da operação.
+
+| RF Associado | Justificativa |
+|-------------|--------------|
+| RF01, RF03, RF04 e RF07 | O tempo cobre todo o fluxo: detecção, transmissão, processamento e retorno da API. |
+
+### RNF02 - Acurácia e nitidez na captura das imagens
+
+&emsp; O sistema de captura de fotos do drone deve garantir que, no mínimo, 80% das fotos captadas sejam referentes a placas de carros, sejam nítidas e visíveis o suficiente para a extração dos dados da placa. Assim, garantindo que fatores como trepidação ou variações de luminosidade não impeçam a leitura da placa.
+
+| RF Associado | Justificativa |
+|-------------|--------------|
+| RF02 | A qualidade da imagem é essencial para identificação correta dos dados. |
+
+### RNF03 - Acurácia na identificação e tradução das placas
+
+&emsp; O modelo de visão computacional do servidor deve possuir uma acurácia mínima de 85% na assertividade na tradução das placas alfanuméricas dos veículos, minimizando erros de leitura e maximizando a confiabilidade dos dados enviados para a API da PIer.
+
+| RF Associado | Justificativa |
+|-------------|--------------|
+| RF04 | Garante confiabilidade no processamento OCR. |
+
+### RNF04 - Segurança e privacidade dos dados
+
+&emsp; Em conformidade com a LGPD (Lei n° 13.709/2018), o sistema deve garantir a privacidade dos dados de veículos não sinistrados, com isso, implica-se que essas informações serão descartadas imediatamente após o processamento e negação de qualquer associação com a seguradora, não ocorrendo, portanto, exposição de dados. Além disso, a comunicação entre drone, servidor e API deve ser protegida através de protocolos de criptografia, garantindo a integridade e o sigilo das informações durante o tráfego, impedindo interceptações.
+
+| RF Associado | Justificativa |
+|-------------|--------------|
+| RF04 e RF07 | A privacidade deve ser garantida na extração e validação dos dados. |
+
+### RNF05 - Atualização do mapa de calor
+
+&emsp; O mapa de calor da interface será atualizado semanalmente, refletindo dados dos últimos três meses sobre locais de desova e criminalidade. Inicialmente, a base será alimentada por registros de órgãos de segurança pública (como a Polícia Federal). À medida que a solução for operada, o sistema passará a incorporar os registros de ocorrências validadas pela própria aplicação, criando uma base histórica proprietária da Pier.
+
+| RF Associado | Justificativa |
+|-------------|--------------|
+| RF06 | A atualização garante relevância e precisão das análises geográficas. |
+
+### RNF06 - Transmissão da visualização da operação
+
+&emsp; A interface do operador deve exibir a transmissão de imagem da câmera com um atraso inferior a 2 segundos. Essa agilidade na transmissão é fundamental para garantir que a visualização da câmera do drone seja sincronizada com o posicionamento da aeronave durante a captura dos veículos.
+
+| RF Associado | Justificativa |
+|-------------|--------------|
+| RF05 | Essencial para controle seguro e tomada de decisão em tempo real. |
+
+### RNF07 - Arquitetura escalável
+
+&emsp; O sistema deve ser projetado para suportar o recebimento simultâneo de dados de, no mínimo, cinco drones em operações concomitantes, garantindo a escalabilidade da frota. A infraestrutura de backend deve assegurar a integridade do banco de dados e a eficiência no processamento da API interna, mantendo a estabilidade do sistema mesmo sob alta demanda de tráfego.
+
+| RF Associado | Justificativa |
+|-------------|--------------|
+| RF03, RF04 e RF07 | O backend deve lidar com múltiplos fluxos de dados simultâneos. |
+
+---
+
+&emsp; A consolidação dos requisitos funcionais e não funcionais estabelece um alinhamento técnico entre as necessidades da Pier Seguradora e a solução proposta.
+
+&emsp; Esses requisitos servirão como base para:
+
+- Construção do MVP (Produto Mínimo Viável)  
+- Definição dos casos de teste  
+- Validação das funcionalidades implementadas  
+
+&emsp; Ao definir métricas claras de acurácia, latência e segurança, o projeto ganha objetividade e mensurabilidade, garantindo que cada etapa do desenvolvimento esteja diretamente conectada à dor do parceiro.
+
+&emsp; Com essa base sólida, a próxima fase do projeto foca na implementação prática da solução em um ambiente escalável e eficiente.

@@ -1,0 +1,9 @@
+{
+    "label": "YOLO",
+    "position": 2,
+    "link": {
+    "type": "generated-index",
+    "title": "Sprint 3 - YOLO",
+    "description": "Durante a Sprint 3, a equipe visou aprimorar a performance dos modelos de detecção de placas e experimentaram maneiras de integrá-los com o sistema já desenvolvido. O desenvolvimento se separou em três frentes: Fine-tuning dos modelos já existentes, a separação do sistema em dois modelos (detecção de veículo e detecção de placa) e o treinamento usando um dataset maior. Para a Sprint 4, o grupo pretende comparar os resultados obtidos em cada frente para assim escolher uma solução definitiva."
+    }
+}

@@ -1,0 +1,385 @@
+ *{
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+}
+
+.assignments-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background-color: #eaf3f7;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+}
+
+.assignments-main {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  background-color: #eaf3f7;
+  overflow: hidden;
+}
+
+.assignments-header {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.assignments-header h1 {
+  margin: 0;
+  color: #c21f4a;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.assignments-error-message {
+  margin: 12px 28px 0 16px;
+  padding: 8px 12px;
+  background-color: #fff0f2;
+  border: 1px solid #c0162d;
+  border-radius: 6px;
+  color: #c0162d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.assignment-selector {
+  height: 228px;
+  display: grid;
+  grid-template-columns: 215px 1fr 220px;
+  align-items: center;
+  column-gap: 62px;
+  padding: 22px 40px 8px 30px;
+}
+
+.selected-drone-card {
+  width: 215px;
+  height: 164px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.selected-drone-image {
+  width: 100%;
+  height: 76px;
+  display: block;
+  object-fit: cover;
+}
+
+.selected-drone-body {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px 8px;
+}
+
+.selected-drone-info h2 {
+  margin: 0;
+  color: #222222;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.selected-drone-info p {
+  margin: 3px 0 7px;
+  color: #333333;
+  font-size: 10px;
+}
+
+.drone-status-row {
+  width: 188px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #545454;
+  font-size: 10px;
+  border-top: 1px solid #eeeeee;
+  padding-top: 3px;
+  margin-top: 2px;
+}
+
+.drone-status-row span:last-child {
+  width: 10px;
+  height: 10px;
+  background-color: #0bb340;
+  border-radius: 50%;
+}
+
+.drone-status-row:first-of-type span:last-child {
+  background-color: #5cd26e;
+}
+
+.drone-status-row strong {
+  color: #111111;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.selector-arrows {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.selector-arrows button {
+  border: none;
+  background: transparent;
+  color: #222222;
+  font-size: 19px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.assignment-action {
+  height: 145px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.assignment-link-icon {
+  color: #1f1f1f;
+  font-size: 42px;
+  line-height: 1;
+  margin-bottom: 42px;
+}
+
+.assignment-action button {
+  height: 24px;
+  padding: 0 14px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  color: #c21f4a;
+  font-family: monospace;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+}
+
+.assignment-action button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.selected-operator-card {
+  width: 220px;
+  height: 165px;
+  background-color: #ffffff;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.operator-avatar {
+  height: 114px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #bd2859;
+  color: #ffffff;
+}
+
+.operator-avatar span {
+  font-size: 62px;
+  font-weight: 700;
+}
+
+.selected-operator-body {
+  height: 51px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.selected-operator-info h2 {
+  margin: 0;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.selected-operator-info p {
+  margin: 0;
+  color: #333333;
+  font-size: 12px;
+}
+
+.operator-online-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.operator-online-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.operator-online-status.online {
+  color: #04783d;
+}
+
+.operator-online-status.online::before {
+  background-color: #04783d;
+}
+
+.operator-online-status.offline {
+  color: #8c8c8c;
+}
+
+.operator-online-status.offline::before {
+  background-color: #8c8c8c;
+}
+
+.latest-assignments {
+  height: 333px;
+  margin: 0 28px 0 16px;
+  padding: 0 12px 18px;
+  background-color: #f5f3f4;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.latest-assignments > h2 {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding-left: 6px;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.latest-assignments-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 19px 26px;
+}
+
+.assignment-card {
+  position: relative;
+  height: 124px;
+  display: grid;
+  grid-template-columns: 114px 1fr 118px;
+  align-items: center;
+  padding: 0 22px;
+  border: 1px solid #c21f4a;
+  border-radius: 6px;
+  background-color: #f7eef4;
+}
+
+.assignment-card-active {
+  border-color: #c21f4a;
+}
+
+.assignment-card-inactive {
+  opacity: 0.72;
+}
+
+.assignment-drone-mini-card {
+  width: 114px;
+  height: 84px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.assignment-drone-mini-card img {
+  width: 100%;
+  height: 53px;
+  display: block;
+  object-fit: cover;
+}
+
+.assignment-drone-mini-card div {
+  padding: 3px 5px;
+}
+
+.assignment-drone-mini-card h3 {
+  margin: 0;
+  color: #111111;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.assignment-drone-mini-card p {
+  margin: 0;
+  color: #333333;
+  font-size: 9px;
+}
+
+.assignment-card-link {
+  justify-self: center;
+  color: #1f1f1f;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.assignment-operator-mini-card {
+  width: 118px;
+  height: 84px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.assignment-operator-mini-card > div {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #bd2859;
+  color: #ffffff;
+}
+
+.assignment-operator-mini-card span {
+  font-size: 39px;
+  font-weight: 700;
+}
+
+.assignment-operator-mini-card h3 {
+  margin: 2px 0 0;
+  color: #111111;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.assignment-operator-mini-card p {
+  margin: 0;
+  color: #333333;
+  font-size: 9px;
+}
+
+.assignment-card time {
+  position: absolute;
+  right: 130px;
+  bottom: 7px;
+  color: #222222;
+  font-size: 11px;
+}

@@ -1,0 +1,50 @@
+---
+title: Integração OCR com API da Pier
+sidebar_position: 2
+id: integracao-ocr-api
+sidebar_label: Integração OCR + API
+---
+
+# Integração OCR com API da Pier
+
+&emsp;Esta seção documenta a integração entre o reconhecimento de placas (OCR) e a API de consulta veicular da Pier. O objetivo foi validar o fluxo completo de ponta a ponta: leitura da placa no notebook, normalização do valor reconhecido, envio para a API e tratamento dos retornos de negócio.
+
+## Objetivo da Integração
+
+&emsp;A integração foi construída para permitir que a placa lida pelo modelo OCR seja consultada automaticamente na API, preservando rastreabilidade do resultado e separando claramente falhas técnicas de respostas de negócio.
+
+## Processo de Desenvolvimento da Integração
+
+&emsp;A integração entre OCR e API foi desenvolvida em etapas curtas, com validação incremental. Primeiro, foi estruturada a camada de autenticação (`auth_service.py`) para obtenção do token via OAuth2, com tratamento de falhas de credencial, timeout e resposta inválida. Em seguida, foi construída a camada de consulta (`vehicle_service.py`), responsável por montar o payload da API e centralizar as chamadas de lookup e confirmação. Após a camada de serviços, a integração foi conectada ao notebook de OCR por meio de uma célula dedicada ao fluxo OCR -> API. Essa célula extrai a placa prevista pelo modelo, normaliza o valor lido, injeta geolocalização no payload e realiza a consulta na API da Pier. Com isso, o notebook passou a representar um fluxo real de inferência e validação de negócio, e não apenas um teste isolado de modelo.
+
+## Arquitetura Implementada
+
+&emsp;A solução foi separada em duas camadas principais. A primeira camada é a de autenticação, responsável por obter o `access_token` via OAuth2. A segunda camada é a de consulta de veículo, responsável por enviar `license_plate` e `geolocation` para a rota de lookup e por tratar retornos de erro de forma estruturada. Essa implementação ficou concentrada em três artefatos principais: `src/services/auth_service.py`, `src/services/vehicle_service.py` e `notebook/train_plate_ocr.ipynb`, no qual foi adicionada a célula de integração OCR -> API.
+
+## Contrato da API Validado em Teste
+
+&emsp;Durante os testes, foi confirmado que a rota de consulta exige `license_plate` e um objeto `geolocation` contendo `latitude` e `longitude`. Também foi observado que a ausência desses campos gera erro de validação `400`, o que reforçou a necessidade de padronizar a montagem do payload no serviço de veículos., assim, foi necessário adicionar uma coordenada de exemplo para validar o desenvolvimento, já que o projeto não conta com um sistema de GPS.
+
+## Variáveis de Ambiente Utilizadas
+
+&emsp;A integração depende de variáveis de ambiente para autenticação e roteamento das chamadas. Foram utilizadas `API_TOKEN_URL`, `API_USERNAME`, `API_PASSWORD`, `API_CLIENT_ID` e `API_CLIENT_SECRET` para a etapa de token. Para as rotas, foram aceitos os nomes `API_vehicle_lookups` ou `API_VEHICLE_LOOKUPS`, além de `API_vehicle_lookups_id` ou `API_VEHICLE_LOOKUPS_ID` para confirmação. Também foram previstos `API_DEFAULT_LATITUDE` e `API_DEFAULT_LONGITUDE` como parâmetros opcionais de geolocalização padrão, e `API_VEHICLE_LOOKUP_PLATE_FIELD` como variável opcional para o nome do campo da placa, com valor padrão `license_plate`.
+
+## Fluxo OCR -> API no Notebook
+
+&emsp;No notebook `train_plate_ocr.ipynb`, a integração foi posicionada após a célula de inferência do OCR. O fluxo executa a leitura da imagem, obtém o resultado em `result`, extrai o texto previsto da placa, normaliza esse valor e realiza o envio para a API por meio de `lookup_vehicle_by_plate(...)`, incluindo geolocalização. Em seguida, a resposta é classificada entre três comportamentos esperados: veículo encontrado, consulta válida sem correspondência e falha técnica.
+
+## Decisões Técnicas e Ajustes Realizados
+
+&emsp;Durante os testes, foram identificados requisitos obrigatórios da API que não estavam explícitos na primeira tentativa de integração, principalmente a obrigatoriedade de `license_plate` e `geolocation`. A ausência desses campos resultava em erro `400`, o que levou à padronização definitiva do payload no serviço de consulta. Além disso, foi adotada uma convenção de interpretação de respostas para alinhar o comportamento técnico com a regra de negócio: respostas `200` indicam veículo encontrado, respostas `404` com `VehicleLookup::NotFound` representam consulta válida sem match, e demais códigos `4xx/5xx` são tratados como falha técnica de integração.
+
+## Resultados Obtidos
+
+&emsp;Ao final do processo, o pipeline OCR -> API foi validado de ponta a ponta. O notebook conseguiu executar inferência de placa em imagem real, extrair e normalizar o texto reconhecido, consultar a API com payload aderente ao contrato e classificar corretamente o retorno. No cenário testado, a placa `QUP8066` foi lida com sucesso e a API respondeu com `404 Vehicle not found`, classificado corretamente como consulta válida sem correspondência. Esse comportamento confirma que a integração está funcional para o fluxo esperado.
+
+## Observações Operacionais
+
+&emsp;Na operação, o retorno `404` deve ser tratado como resultado de negócio esperado quando não houver correspondência na base. O retorno `400` deve ser interpretado como problema de payload, enquanto `401/403` indicam problema de autenticação ou autorização. Para validar o caminho positivo de negócio com retorno de veículo encontrado, ainda é necessário testar com uma placa existente na base de staging.
+
+## Conclusão
+
+&emsp;A integração entre OCR e API da Pier foi concluída e validada tecnicamente. O sistema já consegue ler a placa, consultar a API e interpretar corretamente respostas de sucesso, não correspondência e erro técnico, fornecendo base sólida para evolução do fluxo de negócio.

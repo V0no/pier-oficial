@@ -1,0 +1,32 @@
+.hist-page {
+  display: flex;
+  min-height: 100vh;
+  background: #F9FAFB;
+}
+
+.hist-page__main {
+  flex: 1;
+  padding: 2rem 2.5rem;
+}
+
+.hist-page__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #C41D6F;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.hist-page__title {
+  margin: 6px 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.hist-page__description {
+  font-size: 15px;
+  color: #6B7280;
+  margin-bottom: 1.5rem;
+}

@@ -1,0 +1,49 @@
+# GitLab CI/CD para deploy automático no GitLab Pages
+# Documentação: https://docs.gitlab.com/ee/ci/
+
+image: node:20
+
+stages:
+  - build
+  - deploy
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  # Configuração para GitLab Pages
+  SITE_URL: "https://g01-5f2942.pages.git.inteli.edu.br"
+  BASE_URL: "/"
+
+# Cache para acelerar builds
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+    - docs/node_modules/
+
+# Job de build
+build:
+  stage: build
+  script:
+    - cd docs
+    - npm ci --legacy-peer-deps
+    - npm run build
+  artifacts:
+    paths:
+      - docs/build/
+    expire_in: 1 week
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+# Job de deploy para GitLab Pages
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp -r docs/build/* public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  needs:
+    - build

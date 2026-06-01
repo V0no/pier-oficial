@@ -1,0 +1,108 @@
+---
+title: Tese Central
+sidebar_position: 1
+---
+
+&emsp;Partindo do TAPI (documento que rege o projeto) e da visão geral do parceiro, fica evidente que a Pier tem como objetivo uma solução capaz de aumentar a eficiência no processo de busca e recuperação de veículos roubados ou furtados.
+
+&emsp;Atualmente, esse processo é realizado de forma terceirizada; empresas especializadas são contratadas para localizar veículos sinistrados e recebem uma recompensa em caso de sucesso. No entanto, esse modelo apresenta limitações estruturais relevantes: a operação depende da presença física de agentes em campo e da disponibilidade de indivíduos para verificar manualmente os registros dos veículos encontrados, confirmando se foram, de fato, sinistrados. Como consequência, trata-se de um processo com baixa escalabilidade, suscetível a falhas humanas e limitado em cobertura. Esse cenário se reflete na taxa de recuperação: atualmente, apenas cerca de 10% dos veículos roubados ou furtados são efetivamente recuperados. (PIER SEGURADORA, 2026)
+
+## Visão Computacional
+
+&emsp;Diante dessas limitações, surge a oportunidade de repensar o processo sob uma nova abordagem. Em vez de depender exclusivamente da atuação humana, propõe-se a utilização de tecnologias de visão computacional para automatizar a identificação de veículos, ampliando a capacidade de monitoramento e reduzindo a necessidade de intervenção manual. Essa mudança não representa apenas uma otimização incremental, mas sim uma transformação na forma como a busca é conduzida, substituindo um modelo reativo e pontual por um sistema contínuo e escalável.
+
+&emsp;Nesse contexto, define-se a tese do grupo: a implementação de tecnologia de visão computacional para identificação de placas de veículos pode gerar mais valor e aumentar a eficiência na procura de carros roubados ou furtados segurados pela Pier.
+
+&emsp;Para sustentar essa proposta, é necessário demonstrar que a tecnologia envolvida é viável e já apresenta resultados concretos em cenários reais. Nesse sentido, foi analisado o Córtex, uma solução baseada em inteligência artificial que realiza a leitura de placas de veículos por meio de milhares de câmeras viárias distribuídas em rodovias, pontes, túneis, ruas e avenidas em diversos países, permitindo o rastreamento de alvos móveis em tempo real (INTERCEPT BRASIL, 2020).
+
+&emsp;Um artigo publicado pela Intercept Brasil, embora discuta controvérsias relacionadas ao uso da tecnologia, destaca sua eficiência operacional. Com um índice de acerto de aproximadamente 92%, as cerca de 6 mil câmeras que compõem o sistema são capazes de identificar e rastrear veículos, possibilitando consultas a informações como o estado do veículo (se é ou não roubado), CPF do proprietário e outros dados relevantes (INTERCEPT BRASIL, 2020). Ainda que o Córtex não corresponda diretamente ao escopo da Pier, ele demonstra um ponto essencial para esta tese: a leitura automatizada de placas é tecnicamente viável, precisa e já validada em ambientes reais. Assim, não se trata de uma hipótese experimental, mas da aplicação direcionada de uma tecnologia já consolidada.
+
+&emsp;A partir dessa constatação, o grupo investigou quais tecnologias tornam essa solução possível. A identificação de veículos em imagens e vídeos depende de algoritmos de detecção de objetos, como YOLO (You Only Look Once), SSD (Single Shot Multibox Detection) e Faster R-CNN (Region-based Convolutional Neural Network). Esses modelos são amplamente utilizados no mercado por sua capacidade de localizar objetos em imagens com alta precisão e, em alguns casos, em tempo real (PALUDO, 2023). Sua função dentro da solução proposta é permitir que veículos sejam automaticamente detectados em diferentes cenários, substituindo a necessidade de observação humana contínua.
+
+&emsp;Entretanto, a detecção do veículo por si só não é suficiente para viabilizar a identificação. Para isso, é necessário extrair e interpretar as informações contidas na placa. Essa etapa é realizada por meio de algoritmos de OCR (Optical Character Recognition), responsáveis por converter imagens contendo texto em dados estruturados. Diferentemente da detecção de objetos, o OCR permite transformar a imagem da placa em informação utilizável pelo sistema, tornando possível a consulta automática em bases de dados (MODAL, 2023).
+
+### OCR (Reconhecimento Óptico de Caracteres)
+
+&emsp;Nesse contexto, foram analisados diferentes modelos de OCR. O PaddleOCR se destaca por sua alta precisão e desempenho em cenários complexos, como imagens com baixa qualidade ou ângulos desfavoráveis (MODAL, 2023). O EasyOCR, amplamente utilizado na comunidade Python, apresenta resultados superiores a 95% de acerto na leitura de placas em testes comparativos (SCILIT, 2022). Já o Fast-Plate-OCR é uma solução otimizada especificamente para o reconhecimento de caracteres em placas veiculares, oferecendo alto desempenho com baixo custo computacional (ANKANDREW, 2023). Em conjunto, essas tecnologias permitem não apenas identificar veículos, mas também extrair e processar automaticamente as informações necessárias para sua verificação.
+
+&emsp;A integração entre detecção de objetos e leitura de caracteres viabiliza a construção de um sistema capaz de operar de forma contínua, analisando fluxos de imagens e identificando veículos de interesse em tempo real (DSwithBappy, 2023; MODAL, 2023). Diferentemente do modelo atual, que depende da presença humana e de ações pontuais, essa abordagem permite ampliar significativamente a cobertura do processo de busca, reduzindo a probabilidade de falhas associadas à limitação operacional e à subjetividade humana.
+
+&emsp;Sob essa perspectiva, a principal vantagem da utilização de visão computacional está na eliminação dos principais gargalos do processo atual. Enquanto a abordagem tradicional é limitada por disponibilidade, atenção e alcance geográfico, um sistema automatizado pode operar de forma ininterrupta, escalar com a adição de novas fontes de dados (como câmeras) e manter consistência na análise. Além disso, ao reduzir a dependência de validações manuais, diminui-se também a incidência de erros humanos, aumentando a confiabilidade do processo.
+
+&emsp;Embora ainda não tenha sido realizada uma validação empírica no contexto específico da Pier, a combinação de evidências técnicas, casos reais de aplicação e análise das limitações do modelo atual sustenta a hipótese de que a adoção de visão computacional tende a aumentar a eficiência da operação. Espera-se, com isso, não apenas elevar a taxa de recuperação de veículos, atualmente em torno de 10%, mas também reduzir o tempo necessário para identificação e ação, além de otimizar os custos associados ao processo.
+
+&emsp;Por fim, vale destacar que essa abordagem apresenta aderência direta ao contexto da Pier. Ao focar especificamente na identificação de veículos segurados, a solução pode ser implementada de forma direcionada, utilizando bases de dados já existentes e priorizando casos relevantes para o negócio. Diferentemente de sistemas amplos de vigilância, trata-se de uma aplicação estratégica e orientada a resultado, com potencial para gerar impacto direto na redução de prejuízos e no aumento da eficiência operacional.
+
+## Sub-Tese : Uso de RPAs (Drones)
+
+&emsp;As Aeronaves Remotamente Pilotadas (Remotely-Piloted Aircraft - RPA), mais conhecidas como drones, vem ganhando notoriedade devido à capacidade de acelerar e otimizar processos. São rápidos, versáteis e compatíveis com diversas indústrias que necessitam de trabalho manual, e frequentemente trazem números impressionantes; no setor de monitoramento de plantações, por exemplo, trouxeram melhoria de área coberta de mais de 1900% em relação aos métodos tradicionais (PANOTRA *et al.*, 2025). Torna-se evidente que a implementação de drones dentro de um fluxo de trabalho de monitoramento pode ser extremamente eficaz e deve ser no mínimo considerada.
+
+&emsp;Relacionando isso ao projeto em questão, a utilização de drones para patrulhamento de áreas de possível desova pode gerar redução na dependência da terceirização de serviços de ronda e localização de veículos. A proposta de operação sugere o uso de drones controlados pela própria empresa para investigar áreas de interesse, que irão capturar imagens dos carros e registrar onde estão localizados, e então transmitir quaisquer dados de interesse de volta para a empresa. Isso pode ser realizado através de componentes de câmera e rastreamento GPS instalados nos drones.
+
+&emsp;Para a identificação adequada dos veículos, é importante que sejam levados em conta a distância, ângulo e resolução das imagens ao serem capturadas por drones, e então não basta apenas um modelo de leitura de placas de carros comum. Alguns artigos acadêmicos já tratam esse problema, como a solução de Fakhrurroja *et al.* (2023), que faz uso do algoritmo YOLOv8 combinado com OCR, permitindo a detecção eficiente de placas veiculares em imagens capturadas por um drone DJI Tello, relatando 100% de precisão na detecção de placas, e 66% na leitura da placa completa, enquanto a implementação de Mokayed *et al.* (2025) alcançou precisão acima de 75% na leitura das placas utilizando uma mescla de YOLOv3, PCM, clusterização e tecnologia Natural Scene Text para isso, performando bem até mesmo em imagens tiradas pelo drone em ângulos oblíquos.
+
+&emsp;Regulamentos da Agência Nacional de Aviação (ANAC) e do Departamento Especial de Controle Aéreo (DECEA), se mostram como verdadeiros pontos de contenção; ambos impõem uma lista extensa de regras e regulações que devem ser cumpridas para garantir segurança durante a operação dos drones. Até 1 de julho de 2025, era autorizada a pilotagem de RPAs sem necessidade de cadastro do aparelho, ou certificação do piloto, desde que a decolagem seja de menos de 250g e o vôo não ultrapassasse 400 pés (~120 metros) acima do nível do solo, e o piloto mantivesse linha de visada. Com as normas introduzidas na ICA 100-40 (BRASIL, 2026), é obrigatória autorização para todas as aeronaves não tripuladas. Ademais, o DECEA é bem rígido sobre quais áreas um drone pode sobrevoar, e é provável que deva ser requisitada autorização para o vôo dependendo do território que deve ser monitorado, e o ANAC tem direito de restringir quaisquer atividades se julgar necessário por questões de segurança.
+
+## Sub-Tese : Locais de Desova
+
+### Fundamentação Geoespacial
+
+&emsp;A eficiência na recuperação de veículos roubados ou furtados segurados pela Pier pode ser significativamente ampliada ao se compreender a relação geográfica entre o local da ocorrência e o ponto de abandono (desova). Estudos baseados em dados reais evidenciam que os locais de recuperação não se distribuem aleatoriamente no espaço, mas seguem uma estrutura probabilística fortemente dependente da origem do crime. Diante disso, a tese central desta abordagem consiste em utilizar o mapeamento espacial preditivo integrado a drones com inteligência artificial para localizar veículos sinistrados de forma autônoma e contínua, superando as limitações operacionais das buscas humanas tradicionais.
+
+&emsp;A comprovação dessa dependência espacial permite o uso de metodologias avançadas para direcionar os recursos de busca. A estimativa de densidade por kernel apresenta-se como a ferramenta ideal, pois transforma registros pontuais em mapas de calor que evidenciam áreas de maior probabilidade de desova. Contudo, para evitar a superestimação de riscos em áreas inabitadas, como lagos, a ciência recomenda a adoção do Network Kernel Density Estimation (NKDE), que mapeia os hotspots de forma linear, acompanhando o traçado exato das ruas e rodovias. Essa visualização contínua constitui a representação mais fiel para identificar zonas críticas e apoiar a tomada de decisão.
+
+### Evidências no Contexto Brasileiro
+
+&emsp;Os padrões geográficos dessas zonas críticas são confirmados por estatísticas brasileiras. Uma análise de ocorrências em Campinas (SP) demonstrou que criminosos priorizam bairros suburbanos de baixa densidade cortados por rodovias para esconder os automóveis. Em uma escala ainda maior, dados estruturados em coordenadas SIRGAS 2000 — extraídos de plataformas como o Sinesp-VDE e o ISP-RJ — revelam que municípios como Belford Roxo (RJ) apresentam taxas de recuperação de até 91%, atuando estatisticamente como verdadeiros polos logísticos criminais que recebem frotas desviadas das capitais.
+
+### Validação Internacional
+
+&emsp;A viabilidade técnica de automatizar a fiscalização nessas regiões é validada por casos de sucesso internacionais. Nos Estados Unidos, o departamento de polícia de São Francisco adotou o modelo Drone as First Responder (DFR), utilizando aeronaves não tripuladas equipadas com sistemas automáticos de leitura de placas (ALPR). A iniciativa alcançou um tempo de resposta de 88 segundos e reduziu o roubo de automóveis em 42%, flagrando, inclusive, a prática de "esfriamento" (troca de placas) em tempo real. Na Flórida, drones equipados com sensores térmicos infravermelhos (LWIR) desmantelaram esconderijos noturnos de SUVs de luxo ao rastrearem a radiação de calor residual emitida por motores e pneus recém-estacionados.
+
+### Viabilidade Técnica no Brasil
+
+&emsp;Para replicar essas capacidades no Brasil, o ecossistema tecnológico já dispõe de recursos robustos. O treinamento de arquiteturas de Deep Learning (como o YOLO) para a leitura autônoma pelo drone pode ser alimentado pelo dataset UFPR ALPR, que fornece milhares de imagens de alta resolução de placas nacionais em diversos ângulos e cenários. No entanto, a dinâmica criminosa exige adaptação: os esconderijos e galpões de desmanche rápido (chop shops) mudam frequentemente de endereço para burlar a fiscalização. Para mitigar essa volatilidade, a solução deve incorporar Inteligência Artificial Dinâmica (como redes LSTM e Random Forest) capaz de processar continuamente o fluxo viário, o clima e dados socioeconômicos, redefinindo automaticamente as rotas de voo a curto prazo. Somado a isso, o uso de "inteligência de enxame" (swarm intelligence) viabilizada por conexões de baixa latência (5G/Starlink) permite que os drones coordenem um rastreamento ininterrupto desde a primeira detecção até a desova final.
+
+### Aspectos Jurídicos
+
+&emsp;Por fim, é imprescindível alinhar a inovação tecnológica às normativas vigentes. Embora a Lei Geral de Proteção de Dados (LGPD) preveja flexibilizações para o tratamento de dados voltado à segurança, a jurisprudência brasileira determina que o uso de drones para vigilância sem mandado judicial seja restrito a situações de flagrante delito ou prevenção de ameaça à vida, em respeito ao princípio constitucional da inviolabilidade do domicílio. Superadas essas barreiras e as limitações de autonomia dos equipamentos comerciais, a integração entre o mapeamento geoespacial estratégico e a robótica móvel oferece à Pier uma ferramenta poderosa e direcionada, capaz de escalar geograficamente e impactar positivamente as taxas de recuperação de sua carteira.
+
+## Referências
+
+INTERCEPT BRASIL. *Governo amplia sistema de vigilância Córtex*. 2020. Disponível em: https://www.intercept.com.br/2020/09/21/governo-vigilancia-cortex/. Acesso em: 28 abr. 2026.
+
+PALUDO, Lucas. *Modelos de visão computacional (YOLO, SSD, Faster R-CNN)*. 2023. Disponível em: https://www.youtube.com/watch?v=7XWhOpXthNI. Acesso em: 28 abr. 2026.
+
+MODAL. *8 top open-source OCR models compared. 2023*. Disponível em: https://modal.com/blog/8-top-open-source-ocr-models-compared. Acesso em: 28 abr. 2026.
+
+DSwithBappy. *License Plate Extraction with YOLOv10 and PaddleOCR & Store Data to Database*. 2024. Disponível em: https://www.youtube.com/watch?v=OTZoCfPPCbQ. Acesso em: 28 abr. 2026.
+
+SCILIT. *Comparison EasyOCR x Tesseract*. 2022. Disponível em: https://www.scilit.com/publications/9aacb2443e0281fc1cabf87d56b76338. Acesso em: 28 abr. 2026.
+
+PANOTRA, Narinder; KADAM, D. M.; RAJ, Amrith; KUMAR G. D., Dileep; MOHANTY, Lalita Kumar; WANI, Rayees A.; SINGH, Bhim; PANIGRAHI, Chandan Kumar; KUNDAL, Shabnam; KUMAR, Vijay; SINGH, Bal Veer. Optimizing crop monitoring efficiency and precision with drone technology. *Archives of Current Research International*, 2025. Disponível em: https://doi.org/10.9734/acri/2025/v25i71307. Acesso em: 28 abr. 2026.
+
+MOKAYED, Hamam; SHIVAKUMARA, Palaiahnakote; ALKHALED, Lama; AL-MASRI, Ahmed N. License Plate Number Detection in Drone Images. *Artificial Intelligence and Applications*, 2025. DOI: 10.47852/bonviewAIA2202421. Disponível em: https://ojs.bonviewpress.com/index.php/AIA/article/view/421. Acesso em: 28 abr. 2026.
+
+FAKHRURROJA, Hanif; PRAMESTI, Dita; HIDAYATULLAH, Abdul; FASHIHULLISAN, Ahda; BANGKIT, Harry; ISMAIL, Nanang. Automated license plate detection and recognition using YOLOv8 and OCR with Tello drone camera. *Proceedings of the International Conference on Computer, Control, Informatics and its Applications (IC3INA)*, 2023. Disponível em: https://doi.org/10.1109/IC3INA60834.2023.10285750. Acesso em: 28 abr. 2026.
+
+BRASIL. Comando da Aeronáutica. Departamento de Controle do Espaço Aéreo (DECEA). *ICA 100-40: Aeronaves não tripuladas e o acesso ao espaço aéreo brasileiro.* 2026. Disponível em: https://publicacoes.decea.mil.br/publicacao/ICA-100-40. Acesso em: 28 abr. 2026.
+
+ANKANDREW. Fast-Plate-OCR. 2023. Disponível em: https://github.com/ankandrew/fast-plate-ocr. Acesso em: 28 abr. 2026.
+
+GLOBAL TELEMETRICS. Exposing Organised Crime: The Dark Trade of Chop Shops. Disponível em: https://globaltelemetrics.com/exposing-organised-crime-the-dark-trade-of-chop-shops/. Acesso em: 30 abr. 2026.
+
+SILAS, [Autor]. [Título do artigo]. 2017. Disponível em: https://www.ige.unicamp.br/geoget/wp-content/uploads/sites/58/2024/06/Silas_2017_Artigo1.pdf. Acesso em: 30 abr. 2026.
+
+ROCHESTER INSTITUTE OF TECHNOLOGY. [Título da tese]. Disponível em: https://repository.rit.edu/theses/12377/. Acesso em: 30 abr. 2026.
+
+YOUTUBE. [Vídeo]. Disponível em: https://www.youtube.com/watch?v=xvRl4UAffOE. Acesso em: 30 abr. 2026.
+
+POLICE CHIEF MAGAZINE. Drones Tactical Response. Disponível em: https://www.policechiefmagazine.org/drones-tactical-response/. Acesso em: 30 abr. 2026.
+
+ELECTRONIC FRONTIER FOUNDATION (EFF). Drone First Responder Programs: 2025 Review. Disponível em: https://www.eff.org/deeplinks/2025/12/drone-first-responder-programs-2025-review. Acesso em: 30 abr. 2026.
+
+SKYDIO. Guide: Drone as First Responder in Action - Real Results. Disponível em: https://www.skydio.com/resources/guides/guide-drone-as-first-responder-in-action-real-results. Acesso em: 30 abr. 2026.
+
+SHIROTA, Shinichiro; GELFAND, Alan E.; MATEU, Jorge. Analyzing car thefts and recoveries with connections to modeling origin–destination point patterns. Spatial Statistics, v. 38, p. 100440, 2020. Disponível em: https://www.sciencedirect.com/science/article/abs/pii/S2211675320300348. Acesso em: 28 abr. 2026.
+
+FOLHA DE S.PAULO. Mapa de calor mostra regiões com mais risco de furto e roubo de veículos na Grande SP. São Paulo, 26 mar. 2025. Disponível em: https://www1.folha.uol.com.br/cotidiano/2025/03/mapa-de-calor-mostra-regioes-com-mais-risco-de-furto-e-roubo-de-veiculos-na-grande-sp.shtml. Acesso em: 30 abr. 2026.

@@ -1,0 +1,70 @@
+.drone-page {
+  display: flex;
+  min-height: 100vh;
+  background: #F9FAFB;
+}
+
+.drone-page__main {
+  flex: 1;
+  padding: 2rem 2.5rem;
+}
+
+/* Header */
+.drone-page__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #C41D6F;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.drone-page__title {
+  margin: 6px 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.drone-page__description {
+  font-size: 15px;
+  color: #6B7280;
+}
+
+/* Stats badges */
+.drone-page__stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.drone-page__stat {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.drone-page__stat--filled {
+  background: #C41D6F;
+  color: #ffffff;
+}
+
+.drone-page__stat--outlined {
+  border: 1.5px solid #D1D5DB;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Card grid */
+.drone-page__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.drone-page__empty {
+  color: #6B7280;
+  font-size: 15px;
+}

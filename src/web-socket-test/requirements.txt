@@ -1,0 +1,9 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+websockets==13.1
+websocket-client==1.9.0
+requests
+numpy
+opencv-python-headless
+python-dotenv==1.0.1
+python-multipart==0.0.12

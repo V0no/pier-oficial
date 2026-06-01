@@ -1,0 +1,115 @@
+.dr-table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+}
+
+.dr-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dr-table thead tr {
+  background: #F9FAFB;
+}
+
+.dr-table th {
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #E5E7EB;
+  white-space: nowrap;
+}
+
+.dr-table td {
+  padding: 14px 20px;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #F3F4F6;
+  vertical-align: middle;
+}
+
+.dr-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.dr-table tbody tr:hover {
+  background: #FAFAFA;
+}
+
+/* Nome cell */
+.dr-cell-nome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dr-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #FDE8F1;
+  color: #C41D6F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.dr-nome__name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+}
+
+.dr-nome__id {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-top: 2px;
+}
+
+/* Model badge */
+.dr-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #C41D6F;
+  color: #ffffff;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Status */
+.dr-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+}
+
+.dr-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dr-status__dot--disponivel   { background: #22C55E; }
+.dr-status__dot--em-uso       { background: #3B82F6; }
+.dr-status__dot--manutencao   { background: #F59E0B; }
+
+/* Empty state */
+.dr-table__empty td {
+  text-align: center;
+  color: #6B7280;
+  padding: 2rem;
+}

@@ -1,0 +1,110 @@
+---
+title: Arquitetura Computacional
+sidebar_position: 4
+---
+
+&emsp; A arquitetura computacional representa o desenho da infraestrutura técnica que permitem o funcionamento integrado de todos os componentes da solução. Ela define como a informação flui de forma segura e eficiente, no caso do presente projeto, desde o momento em que o drone identifica um veículo em campo até o instante em que o dado validado chega aos sistemas da Pier Seguros.
+
+&emsp; O objetivo desta seção é apresentar a organização técnica do projeto. A estrutura proposta separa as tarefas de captura e detecção das tarefas de análise, garantindo que o sistema seja escalável, resiliente e capaz de operar sob as restrições de conectividade comuns em ambientes urbanos.
+
+## Diagrama da Arquitetura
+
+&emsp; O diagrama abaixo ilustra a arquitetura lógica e física da solução, detalhando o fluxo de dados desde o drone até a integração final com a API interna da Pier Seguros. A estrutura é baseada em um modelo descentralizado e com diferentes frentes, utilizando um Broker de Mensagens para garantir a escalabilidade e a consistência da comunicação entre o drone e o backend.
+
+<div style={{ textAlign: 'center' }}>
+
+*Figura 1. Estrutura completa da arquitetura Computacional da solução proposta.*
+
+<img
+  src="/img/arquitetura_computacional/arquitetura_computacional.png"
+  alt="Estrutura completa da arquitetura Computacional da solução proposta."
+  width="1000"
+/>
+
+*Fonte: produzido pelo grupo*
+
+</div>
+
+## Descrição dos Componentes
+
+&emsp; Abaixo, encontra-se o detalhamento de cada bloco da arquitetura. Para facilitar a compreensão, as explicações estão divididas conforme os blocos de estrutura do diagrama.
+
+### A. Operação de Campo
+
+<div style={{ textAlign: 'center' }}>
+
+*Figura 2. Estrutura do bloco de Operação de Campo*
+
+<img
+  src="/img/arquitetura_computacional/operacao_de_campo.png"
+  alt="Estrutura do bloco de Operação de Campo."
+  width="1000"
+/>
+
+*Fonte: produzido pelo grupo*
+
+</div>
+
+- **Drone**: Atua como o dispositivo de borda. Ele é responsável pela captura de vídeo em tempo real, geolocalização via GPS e execução de um modelo para detecção de veículos.
+
+- **Interface do Operador**: Recebe o Feed de vídeo direto do drone com baixa latência, permitindo o controle situacional e visual do piloto.
+
+### B. Infraestrutura de Dados
+
+<div style={{ textAlign: 'center' }}>
+
+*Figura 3. Estrutura do bloco de Infraestrutura de Dados*
+
+<img
+  src="/img/arquitetura_computacional/infraestrutura_de_dados.png"
+  alt="Estrutura do bloco de Infraestrutura de Dados."
+  width="1000"
+/>
+
+*Fonte: produzido pelo grupo*
+
+</div>
+
+- **Broker de Mensagens**: Atua como o intermediário da comunicação. Recebe os dados (Fotos e GPS) via protocolo MQTT, organizando-os em tópicos para que o servidor os processe.
+
+- **Servidor Backend**: O servidor backend comanda o recebimento dos dados do broker, solicita a leitura ao OCR e consolida as informações estruturadas.
+
+- **OCR (Leitura de Placas)**: Módulo especializado que recebe a imagem do servidor e a converte em texto.
+
+- **Banco de Dados**: Armazena o histórico de voos, coordenadas e as placas detectadas. É a fonte principal de dados para a atualização do mapa de calor.
+
+### C. Inteligência de Negócio
+
+<div style={{ textAlign: 'center' }}>
+
+*Figura 4. Estrutura do bloco de Inteligência de Negócio*
+
+<img
+  src="/img/arquitetura_computacional/inteligencia_de_negocios.png"
+  alt="Estrutura do bloco de Inteligência de Negócio."
+  width="700"
+/>
+
+*Fonte: produzido pelo grupo*
+
+</div>
+
+- **Interface do Coordenador**: Dashboard que consome dados históricos do banco para gerar o Mapa de Calor, orientando a tomada de decisão estratégica.
+
+- **API Interna da Pier Seguros**: O ponto final da comunicação dos dados. Recebe o JSON estruturado do servidor para validar se a placa detectada possui registro de sinistro.
+
+## Descrição da Arquitetura
+
+&emsp; A arquitetura foi projetada para operar da seguinte forma:
+
+- **Processamento na Borda**: O drone filtra o que é relevante, ele detecta um veículo e envia para o servidor (Foto + GPS).
+
+- **Comunicação Assíncrona**: O uso do Broker de Mensagens desacopla a produção dos dados do consumo. Isso permite que, mesmo em áreas com oscilação de sinal de internet, os dados sejam enfileirados e processados assim que a conexão estabilizar.
+
+- **Modularidade do OCR**: O serviço de OCR funciona como um microserviço dentro da infraestrutura, utilizado para o processamento das fotos e análise das sequências das placas captadas.
+
+- **Entrega Estruturada**: O fechamento do ciclo ocorre via protocolo HTTPS, onde o servidor envia um objeto JSON padronizado para a API da Pier que fará a verificação com a base de dados de carros sinistrados.
+
+## Conclusão
+
+&emsp; A arquitetura detalhada nesta seção consolida a viabilidade técnica do projeto. O ponto mais relevante desta estrutura é a sua modularidade, que separa a operação de campo, a infraestrutura de processamento e a inteligência de negócio, e dessa forma o sistema permite atualizações independentes e garante que o piloto e o analista recebam exatamente as informações de que precisam para suas respectivas funções.

@@ -1,0 +1,4 @@
+*
+!.gitignore
+
+# Ignora todo o conteúdo dentro da pasta exceto esse arquivo! Não comite datasets no repositório, por favor.

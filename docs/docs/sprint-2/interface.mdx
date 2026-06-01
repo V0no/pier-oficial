@@ -1,0 +1,240 @@
+---
+title: Interface do Usuário
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+&emsp; A interface do usuário representa a camada visual do sistema desenvolvido, por meio da qual será possível executar tarefas e acompanhar operações. Além do desenvolvimento de um wireframe para a [interface utilizada pelo coordenador da operação](../sprint-1/proposta-de-interface.md), também foi elaborado um wireframe para a interface destinada ao administrador das operações. Esse perfil será responsável pela atribuição das operações, bem como pela adição de novos drones e funcionários ao sistema.
+
+&emsp; Os wireframes foram desenvolvidos com o objetivo de servirem como base para a construção do protótipo de alta fidelidade, que posteriormente será utilizado na validação da interface com os usuários.
+
+&emsp; O fluxo do administrador tem início na tela de login, que será a mesma utilizada pelo coordenador, apresentada na seção de [Interface](../sprint-1/proposta-de-interface.md). Após acessar a plataforma, sua principal atividade será realizar a atribuição das operações, ou seja, associar um funcionário ao drone responsável por determinada operação. Por esse motivo, a primeira tela de administração foi projetada para permitir essa ação de forma direta.
+
+&emsp; Para realizar a atribuição, o administrador deverá selecionar um drone entre as opções disponíveis e, em seguida, escolher um operador entre os profissionais disponíveis. Todas as atribuições realizadas serão exibidas em uma tabela localizada abaixo, contendo as informações mais relevantes de cada associação, além de opções para edição ou exclusão dessas atribuições.
+
+<div style={{ textAlign: 'center' }}>
+
+Figura 1. Tela de Atribuição de Operações.
+
+<img
+  src="/img/atribuicao_operacoes.png"
+  alt="Tela de Atribuição de Operações."
+  width="1000"
+/>
+
+Fonte: produzido pelo grupo
+
+</div>
+
+&emsp; Na barra lateral esquerda, o administrador poderá navegar entre as demais telas e funcionalidades disponíveis para seu perfil. Ao selecionar a opção "Drone", será direcionado para a tela de adição e visualização dos drones ativos. Nessa interface, será possível emparelhar os drones, nomeá-los e adicioná-los à tabela de drones disponíveis. Além disso, a tabela permitirá visualizar informações relevantes sobre cada cadastro, assim como editar ou excluir drones já registrados.
+
+<div style={{ textAlign: 'center' }}>
+
+Figura 2. Tela de Drones Ativos.
+
+<img
+  src="/img/drones_ativos.png"
+  alt="Tela de Drones Ativos."
+  width="1000"
+/>
+
+Fonte: produzido pelo grupo
+
+</div>
+
+&emsp; Na terceira funcionalidade da interface, o administrador poderá, de forma semelhante ao gerenciamento de drones, adicionar e visualizar os operadores ativos. Ao selecionar a opção "Operadores" na barra lateral, será redirecionado para a tela correspondente, onde poderá cadastrar novos operadores e visualizar, na tabela inferior, informações relevantes sobre cada registro, além das opções de edição e exclusão.
+
+<div style={{ textAlign: 'center' }}>
+
+Figura 3. Tela de Operadores Ativos.
+
+<img
+  src="/img/operadores_ativos.png"
+  alt="Tela de Operadores Ativos."
+  width="1000"
+/>
+
+Fonte: produzido pelo grupo
+
+</div>
+
+&emsp; Os wireframes desenvolvidos representam uma primeira visão da interface do sistema, tanto para o administrador da plataforma quanto para o operador do drone. Eles servirão como base para o desenvolvimento do protótipo de alta fidelidade, que será posteriormente utilizado na validação da interface com os usuários.
+
+## Protótipo de Alta Fidelidade
+
+&emsp; A partir dos wireframes desenvolvidos anteriormente, foi elaborado o protótipo de alta fidelidade da plataforma, com o objetivo de representar de forma mais próxima a experiência final do usuário. O protótipo permite validar aspectos visuais, fluxo de navegação e organização das informações antes do desenvolvimento completo da aplicação.
+
+## Operador
+
+&emsp; O fluxo do operador inicia-se na tela de login, utilizada para autenticação e acesso à plataforma. Após o login, o operador é direcionado para a tela de seleção do drone disponível para operação. Também foi desenvolvido um histórico de operações, permitindo a visualização das atividades realizadas anteriormente.
+
+<Tabs>
+  <TabItem value="login" label="Login" default>
+
+  &emsp; A tela de login foi desenvolvida para permitir a autenticação do operador na plataforma. Nela, o usuário insere suas credenciais para acessar as funcionalidades disponíveis do sistema.
+
+  <div style={{ textAlign: 'center' }}>
+
+  Figura 4. Tela de Login.
+
+  <img
+    src="/img/prototipo_alta/login.png"
+    alt="Tela de Login."
+    width="1000"
+  />
+
+  Fonte: produzido pelo grupo
+
+  </div>
+
+  </TabItem>
+
+  <TabItem value="selecao" label="Seleção de Drone">
+
+  &emsp; Após realizar o login, o operador é direcionado para a tela de seleção de drones, onde poderá escolher o drone disponível para iniciar a operação correspondente.
+
+  <div style={{ textAlign: 'center' }}>
+
+  Figura 5. Tela de Seleção de Drone.
+
+  <img
+    src="/img/prototipo_alta/selecao_drone.png"
+    alt="Tela de Seleção de Drone."
+    width="1000"
+  />
+
+  Fonte: produzido pelo grupo
+
+  </div>
+
+  </TabItem>
+
+  <TabItem value="transmissao" label="Transmissão">
+
+  &emsp; A tela de drone mostra a transmissão ao vivo da operação, exibindo placas identificadas automaticamente, sua localização e status, com destaque para veículos roubados e acesso ao histórico completo.
+
+  <div style={{ textAlign: 'center' }}>
+
+  Figura 5. Tela de Visualização do Drone e Placas Identificadas.
+
+  <img
+    src="/img/prototipo_alta/transmissao.png"
+    alt="Tela de Visualização do Drone e Placas Identificadas."
+    width="1000"
+  />
+
+  Fonte: produzido pelo grupo
+
+  </div>
+
+  </TabItem>
+
+  <TabItem value="mapa" label="Mapa de Calor">
+
+  &emsp; A tela de mapa de calor mostra a concentração de sinistros na área monitorada pelo drone, utilizando cores para indicar regiões com maior ou menor número de ocorrências e auxiliar nas decisões estratégicas de vigilância.
+
+  <div style={{ textAlign: 'center' }}>
+
+  Figura 6. Tela de Mapa de Calor de Sinistros.
+
+  <img
+    src="/img/prototipo_alta/mapa_calor.png"
+    alt="Tela de Mapa de Calor de Sinistros."
+    width="1000"
+  />
+
+  Fonte: produzido pelo grupo
+
+  </div>
+
+  </TabItem>
+
+  <TabItem value="historico" label="Histórico">
+
+  &emsp; A tela de histórico permite ao operador visualizar as operações realizadas anteriormente, facilitando o acompanhamento e consulta das atividades executadas na plataforma.
+
+  <div style={{ textAlign: 'center' }}>
+
+  Figura 7. Tela de Histórico de Operações.
+
+  <img
+    src="/img/prototipo_alta/historico.png"
+    alt="Tela de Histórico de Operações."
+    width="1000"
+  />
+
+  Fonte: produzido pelo grupo
+
+  </div>
+
+  </TabItem>
+</Tabs>
+
+## Administrador
+
+&emsp; Para o perfil de administrador, foram desenvolvidos protótipos de três telas principais: atribuição de operadores, listagem de drones e gerenciamento de operadores. A interface mantém o padrão visual definido nos wireframes, priorizando clareza e facilidade de navegação.
+
+<Tabs>
+  <TabItem value="atribuicoes" label="Atribuições" default>
+
+&emsp; A tela de atribuição de operadores permite ao administrador associar drones aos operadores disponíveis, exibindo informações do drone selecionado, um carrossel de operadores e um histórico das atribuições já realizadas.
+
+<div style={{ textAlign: 'center' }}>
+
+Figura 8. Tela de Atribuição de Operadores.
+
+<img
+  src="/img/prototipo_alta/atribuicoes.png"
+  alt="Tela de Atribuição de Operadores."
+  width="1000"
+/>
+
+Fonte: produzido pelo grupo
+
+</div>
+  </TabItem>
+
+  <TabItem value="drones" label="Drones">
+
+&emsp;A tela de drones exibe todos os drones cadastrados em uma tabela com informações como nome, ID, modelo, operador responsável e status de operação.
+<div style={{ textAlign: 'center' }}>
+
+Figura 9. Tela de Lista de Drones.
+
+<img
+  src="/img/prototipo_alta/Drones.png"
+  alt="Tela de Lista de Drones."
+  width="1000"
+/>
+
+Fonte: produzido pelo grupo
+
+</div>
+  </TabItem>
+
+  <TabItem value="operadores" label="Operadores">
+
+&emsp; A tela de gerenciamento de operadores permite ao administrador cadastrar, visualizar e administrar os operadores ativos na plataforma. A interface exibe os operadores em formato de lista ou tabela, com as principais informações de cada profissional, além de opções para edição e exclusão de registros.
+
+<div style={{ textAlign: 'center' }}>
+
+Figura 10. Tela de Gerenciamento de Operadores.
+
+<img
+  src="/img/prototipo_alta/operadores.png"
+  alt="Tela de Gerenciamento de Operadores."
+  width="1000"
+/>
+
+Fonte: produzido pelo grupo
+
+</div>
+  </TabItem>
+</Tabs>
+
+## Conclusão
+&emsp; O protótipo de alta fidelidade possibilitou uma representação muito mais detalhada e próxima do resultado final esperado para a plataforma, permitindo visualizar com maior clareza a estrutura das telas, a disposição das informações e o comportamento das principais funcionalidades do sistema. A partir dele, foi possível validar não apenas a organização dos fluxos de navegação, mas também identificar melhorias relacionadas à usabilidade, consistência visual e experiência do usuário durante a interação com a solução.
+
+&emsp; Além disso, o desenvolvimento do protótipo permitiu simular cenários reais de uso da plataforma, facilitando a análise de como os usuários irão interagir com os recursos disponíveis no sistema. Esse processo também auxiliou na identificação de inconsistências presentes nas versões iniciais dos wireframes, possibilitando ajustes antes da etapa de implementação, reduzindo retrabalho e garantindo uma solução mais alinhada às necessidades do projeto e das personas definidas.

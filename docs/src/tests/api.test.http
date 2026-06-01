@@ -1,0 +1,28 @@
+### 
+GET 
+Content-Type: application/json
+{
+
+}
+
+### 
+POST 
+Content-Type: application/json
+
+{
+
+}
+
+### 
+PUT 
+Content-Type: application/json
+
+{
+
+}
+
+### 
+DELETE 
+Content-Type: application/json
+{
+}

@@ -1,0 +1,564 @@
+---
+title: Transmissão de Imagem
+sidebar_position: 4
+slug: /transmissao-imagem
+---
+
+# Transmissão de Imagem do DJI Tello para Backend Remoto
+
+&emsp;Esta seção documenta a pesquisa técnica, as decisões arquiteturais, os testes realizados e os desafios encontrados para viabilizar a transmissão de imagens capturadas por um drone DJI Tello para um backend remoto, no contexto do projeto da Pier Seguros.
+
+&emsp;O objetivo dessa frente é permitir que imagens de veículos sejam capturadas durante o voo, enviadas para processamento externo, analisadas por modelos de visão computacional e OCR, e posteriormente utilizadas para consulta em uma base de sinistros. Dessa forma, a transmissão de imagem se torna a ponte entre a operação física do drone e os serviços computacionais responsáveis por detectar veículos, identificar placas, registrar localização aproximada e gerar alertas em caso de correspondência com veículos roubados ou furtados.
+
+&emsp;Mais do que apenas transmitir vídeo, esta etapa precisa garantir que o backend receba frames suficientes, com metadados mínimos e em uma frequência aceitável para que a identificação de placas seja possível dentro das limitações do MVP.
+
+---
+
+## Pesquisas realizadas
+
+&emsp;A primeira etapa da frente de transmissão de imagem foi entender qual era o problema técnico real a ser resolvido. Antes de desenvolver qualquer código, o grupo investigou como o DJI Tello se comunica, quais limitações existem na conexão com o drone e quais tecnologias poderiam ser utilizadas para enviar imagens a um backend remoto.
+
+---
+
+### Contexto do problema
+
+&emsp;O projeto propõe o uso de drones para apoiar a recuperação de veículos roubados ou furtados. Para isso, o sistema deve capturar imagens de veículos em regiões estratégicas, identificar suas placas e consultar uma base de dados para verificar se há sinistro aberto.
+
+&emsp;Durante a pesquisa, foi identificado que o DJI Tello não possui conexão direta com a internet. O drone cria uma rede Wi-Fi local, à qual o celular do operador se conecta para controlar o voo e receber o vídeo da câmera. Por isso, o backend remoto não consegue se comunicar diretamente com o drone.
+
+&emsp;Essa limitação criou a principal pergunta técnica da frente de transmissão:
+
+> Como enviar imagens capturadas pelo drone para um backend remoto se o drone só se comunica localmente?
+
+&emsp;A partir dessa pergunta, a pesquisa passou a investigar formas de transformar algum dispositivo próximo ao drone em uma ponte entre a rede local do Tello e a infraestrutura remota.
+
+---
+
+### Celular como gateway de borda
+
+&emsp;A primeira hipótese considerada foi utilizar o celular do operador como gateway de borda.
+
+&emsp;Nesse cenário, o celular ficaria fisicamente próximo ao drone, conectado à rede Wi-Fi criada pelo DJI Tello, e seria responsável por encaminhar imagens ou frames para o backend remoto utilizando a rede móvel.
+
+&emsp;As principais responsabilidades do celular seriam:
+
+- conectar-se ao Wi-Fi local do DJI Tello;
+- controlar o drone durante a operação;
+- receber o stream de vídeo da câmera;
+- extrair frames do vídeo;
+- coletar timestamp e, quando disponível, geolocalização;
+- enviar os dados ao backend remoto via internet móvel.
+
+&emsp;A arquitetura pesquisada pode ser representada da seguinte forma:
+
+~~~text
+DJI Tello
+   ↓ Wi-Fi local
+Celular Gateway
+   ├── controla o drone
+   ├── recebe o vídeo
+   ├── extrai frames
+   ├── coleta timestamp e localização
+   └── envia dados via 4G/5G
+Backend Remoto
+   ├── recebe frames
+   ├── organiza fila e buffer
+   ├── executa YOLO e OCR
+   ├── consulta base mock/API da Pier
+   └── gera alertas
+~~~
+
+&emsp;Essa abordagem foi considerada promissora porque elimina a necessidade inicial de um notebook próximo ao drone, tornando a solução mais simples, portátil e mais próxima de um cenário real de operação.
+
+---
+
+### Comunicação simultânea do celular
+
+&emsp;Um ponto central da pesquisa foi entender se o celular conseguiria manter duas conexões ao mesmo tempo:
+
+1. conexão Wi-Fi com o drone;
+2. conexão com a internet móvel para envio dos dados ao backend.
+
+&emsp;Como a rede Wi-Fi do Tello não possui acesso à internet, existe o risco de o celular perder a comunicação com o backend ao se conectar ao drone. Por isso, foi necessário investigar a possibilidade de uso simultâneo do Wi-Fi local e da rede 4G/5G.
+
+&emsp;Essa validação é essencial para a arquitetura, pois confirma se o celular pode, de fato, atuar como gateway entre o DJI Tello e o backend remoto. Sem essa possibilidade, seria necessário adicionar outro dispositivo intermediário, como um notebook, Raspberry Pi ou roteador dedicado, o que aumentaria a complexidade operacional do MVP.
+
+---
+
+### Protocolos analisados
+
+&emsp;Durante a pesquisa, foram analisadas diferentes formas de transmitir dados do celular para o backend: HTTP, MQTT, WebSocket e WebRTC.
+
+&emsp;A escolha do protocolo não depende apenas de qual tecnologia é mais moderna, mas sim do tipo de dado transmitido, da frequência de envio, da necessidade de baixa latência e da complexidade aceitável para o MVP.
+
+---
+
+#### HTTP
+
+&emsp;O HTTP é uma alternativa simples para envio pontual de imagens ou evidências. Pode ser útil para testes iniciais, envio de imagens isoladas ou armazenamento de evidências específicas no backend.
+
+&emsp;No entanto, não é a melhor opção para envio contínuo de frames, pois cada imagem depende de uma requisição independente. Isso aumenta a sobrecarga da comunicação e dificulta a manutenção de um fluxo contínuo em tempo quase real.
+
+&emsp;Por esse motivo, o HTTP foi considerado útil como apoio, mas não como principal canal de transmissão de imagens no MVP.
+
+---
+
+#### MQTT
+
+&emsp;O MQTT é indicado para dados leves, telemetria e eventos. Ele pode ser usado para transmitir informações como bateria, altitude, status do drone, localização do celular, eventos de detecção e alertas de match positivo.
+
+Exemplos de tópicos MQTT:
+
+~~~text
+pier/drones/tello-01/status
+pier/drones/tello-01/telemetry
+pier/drones/tello-01/detection
+pier/drones/tello-01/alerts
+~~~
+
+&emsp;Apesar de ser possível enviar imagens via MQTT, essa abordagem não foi considerada ideal para fluxo contínuo de frames, pois pode sobrecarregar o broker e dificultar a escalabilidade da solução.
+
+&emsp;Por isso, o MQTT foi considerado mais adequado para mensagens leves e estruturadas, e não para a transmissão principal de imagens.
+
+---
+
+#### WebRTC
+
+&emsp;O WebRTC é uma tecnologia adequada para transmissão de vídeo ao vivo com baixa latência, especialmente quando o objetivo é visualização humana em tempo real.
+
+&emsp;Porém, ele adiciona maior complexidade ao MVP, pois exige estrutura de sinalização, possível media server e tratamento específico de mídia.
+
+&emsp;Como o foco inicial do projeto não é entregar uma live perfeita para o usuário, mas sim garantir frames suficientes para processamento de placas, o WebRTC foi considerado uma possibilidade futura, não a escolha principal para o MVP.
+
+---
+
+#### WebSocket
+
+&emsp;O WebSocket foi analisado como alternativa para envio contínuo de frames. Ele mantém uma conexão persistente entre o cliente e o backend, permitindo o envio sequencial de imagens com menor sobrecarga do que várias requisições HTTP independentes.
+
+&emsp;Essa característica torna o WebSocket adequado para o MVP, pois o sistema precisa transmitir frames de forma contínua, mas não necessariamente entregar uma transmissão de vídeo ao vivo com qualidade perfeita.
+
+&emsp;Cada frame enviado pode conter metadados mínimos para rastreabilidade e processamento posterior, como:
+
+- `frame_id`;
+- `timestamp`;
+- identificador do drone ou dispositivo;
+- geolocalização, quando disponível;
+- imagem codificada em base64;
+- formato e qualidade da imagem.
+
+---
+
+## Tomadas de decisão com base nas pesquisas
+
+&emsp;Após as pesquisas, o grupo tomou algumas decisões técnicas para orientar a construção do MVP. Essas decisões foram feitas considerando as limitações do DJI Tello, a necessidade de simplicidade para validação inicial e a prioridade do projeto: não perder frames relevantes para leitura de placas.
+
+---
+
+### Utilizar o celular como gateway inicial
+
+&emsp;A primeira decisão foi manter o celular como principal hipótese de gateway.
+
+&emsp;Essa escolha foi feita porque o celular já faz parte da operação do drone e pode, em tese, cumprir duas funções ao mesmo tempo: receber as imagens do Tello e enviar os frames para o backend remoto.
+
+&emsp;Essa decisão reduz a dependência de equipamentos adicionais e aproxima o MVP de uma operação mais simples em campo.
+
+---
+
+### Usar WebSocket para envio contínuo de frames
+
+&emsp;A segunda decisão foi utilizar WebSocket como principal canal de envio de frames para o backend.
+
+&emsp;A escolha pelo WebSocket se justifica porque:
+
+- permite conexão persistente;
+- reduz a sobrecarga em comparação ao envio HTTP repetido;
+- é mais simples que WebRTC para o MVP;
+- permite enviar imagens e metadados em sequência;
+- atende ao objetivo inicial de transmitir frames para processamento.
+
+&emsp;O foco da solução não é transmitir uma live perfeita, mas garantir que o backend receba imagens suficientes para detectar veículos e placas.
+
+---
+
+### Enviar frames em JPEG
+
+&emsp;Outra decisão foi trabalhar inicialmente com frames em formato JPEG.
+
+&emsp;O JPEG foi escolhido por ser simples de gerar, transmitir, armazenar e inspecionar durante os testes. Além disso, permite controlar a qualidade da imagem, equilibrando tamanho do arquivo e legibilidade da placa.
+
+---
+
+### Utilizar metadados mínimos por frame
+
+&emsp;Cada frame precisa carregar informações mínimas para que o backend consiga organizar e rastrear os dados recebidos.
+
+&emsp;Por isso, foi definido que o payload enviado pelo celular deve conter:
+
+- identificador do frame;
+- timestamp;
+- latitude e longitude, quando disponíveis;
+- imagem em base64.
+
+&emsp;Essa estrutura permite que o backend saiba quando o frame foi gerado, em que sequência ele chegou e qual era a localização aproximada do dispositivo no momento da captura.
+
+---
+
+### Usar buffer e processamento por janelas
+
+&emsp;O backend não deve processar os frames apenas de forma isolada. Foi decidido utilizar uma fila de processamento e um buffer curto, mantendo os frames dos últimos segundos.
+
+&emsp;Essa decisão foi tomada porque uma placa pode estar ilegível em um frame específico, mas mais clara em outro frame da mesma sequência. Assim, quando houver suspeita de placa, o sistema pode salvar e analisar uma pequena janela de imagens.
+
+&emsp;A regra operacional definida foi:
+
+> Receber o fluxo contínuo, manter um buffer curto, processar por janelas e salvar sequências quando houver suspeita de placa.
+
+&emsp;Dessa forma, a solução não depende de um único frame perfeito. O sistema passa a trabalhar com evidência temporal, aumentando a chance de selecionar bons frames para OCR.
+
+---
+
+## Códigos desenvolvidos e testes realizados
+
+&emsp;Com base nas decisões anteriores, o grupo desenvolveu um protótipo funcional para validar o trecho de comunicação entre o celular e o backend remoto.
+
+&emsp;O objetivo desse teste não foi validar ainda a precisão final do YOLO ou do OCR, nem a integração completa com o DJI Tello. O objetivo foi verificar se o backend conseguiria receber imagens enviadas por um dispositivo móvel, armazenar os frames recentes em buffer e disponibilizar informações mínimas para inspeção.
+
+&emsp;A validação foi organizada em três partes:
+
+1. servidor backend;
+2. clientes móveis de envio de imagem;
+3. deploy em ambiente remoto.
+
+---
+
+### Objetivo do teste
+
+&emsp;O teste teve como objetivo responder às seguintes perguntas:
+
+- O celular consegue enviar imagens para um backend remoto?
+- O backend consegue manter uma conexão WebSocket aberta?
+- O backend consegue receber frames em sequência?
+- Cada frame pode ser enviado com `frame_id`, `timestamp`, imagem e localização?
+- O backend consegue armazenar os últimos frames recebidos em um buffer?
+- É possível consultar posteriormente a última imagem recebida?
+- É possível simular uma consulta de sinistro com dados mockados?
+
+&emsp;Com isso, o teste funcionou como uma prova técnica do canal de transmissão, que é uma das partes mais críticas da arquitetura do MVP.
+
+---
+
+### Estrutura do payload
+
+&emsp;Cada frame enviado ao WebSocket deve seguir o seguinte formato JSON:
+
+~~~json
+{
+  "frame_id": 1715100000000,
+  "timestamp": "2026-05-08T12:00:00.000Z",
+  "latitude": -23.5505,
+  "longitude": -46.6333,
+  "image": "<base64 da imagem>"
+}
+~~~
+
+&emsp;Os campos `frame_id`, `timestamp` e `image` são obrigatórios.
+
+&emsp;Os campos `latitude` e `longitude` são opcionais e devem ser preenchidos com `null` quando a localização não estiver disponível.
+
+&emsp;Essa estrutura foi escolhida porque contém o mínimo necessário para que o backend consiga:
+
+- identificar cada frame recebido;
+- ordenar os frames temporalmente;
+- associar a imagem a uma localização aproximada;
+- recuperar a imagem para inspeção;
+- preparar o dado para uma futura etapa de visão computacional.
+
+---
+
+### Cliente web para celular
+
+&emsp;O primeiro cliente desenvolvido foi uma página HTML acessível pelo navegador do celular.
+
+&emsp;Esse cliente é servido pelo próprio backend e permite validar o envio de frames sem depender inicialmente da integração direta com o DJI Tello.
+
+&emsp;Ao iniciar o envio, a página:
+
+- solicita permissão de acesso à câmera traseira do dispositivo;
+- inicia a captura contínua de frames;
+- usa resolução máxima de 640×480;
+- envia imagens em JPEG com qualidade aproximada de 75%;
+- coleta a geolocalização do celular via API do navegador;
+- transmite cada frame para o backend via WebSocket;
+- exibe o status da conexão;
+- mostra o contador de frames enviados;
+- exibe a última resposta recebida do backend.
+
+&emsp;Esse cliente foi importante para validar o fluxo de envio em tempo quase real usando apenas o celular e o backend remoto.
+
+&emsp;Contudo, ele não acessa diretamente o stream UDP do DJI Tello. Ele valida o trecho entre celular e backend, mas não substitui a etapa futura de integração com o vídeo real do drone.
+
+---
+
+### Script Termux
+
+&emsp;O segundo cliente desenvolvido foi um script Python para execução via **Termux** no celular Android.
+
+&emsp;Esse script monitora uma pasta específica do armazenamento do Android:
+
+~~~text
+~/storage/shared/PierFrames
+~~~
+
+&emsp;Ao detectar uma nova imagem com extensão `.jpg`, `.jpeg` ou `.png`, o script:
+
+1. lê o arquivo;
+2. converte a imagem para base64;
+3. monta o payload com `frame_id` baseado em timestamp Unix;
+4. adiciona o `timestamp` no formato UTC;
+5. abre uma conexão WebSocket com o backend;
+6. envia o payload;
+7. aguarda a confirmação de recebimento;
+8. registra a imagem como enviada para evitar reenvios.
+
+&emsp;Esse cliente é uma alternativa ao cliente web para cenários em que a captura seja feita por um aplicativo externo, como uma câmera, aplicativo de drone ou outro processo que salve imagens automaticamente na galeria do celular.
+
+&emsp;Durante os testes, foi necessário considerar também o formato dos arquivos gerados pelo celular. Inicialmente, o script aceitava apenas `.jpg`, `.jpeg` e `.png`. Caso o celular salve imagens no formato `.heic`, o script precisa ser ajustado para aceitar esse formato ou converter a imagem antes do envio.
+
+---
+
+### Deploy do backend
+
+&emsp;O backend foi implantado na plataforma **Render** utilizando o arquivo `render.yaml` como configuração de infraestrutura.
+
+&emsp;As definições aplicadas foram:
+
+- **Tipo de serviço:** web;
+- **Ambiente:** Python 3.11;
+- **Comando de build:** `pip install -r requirements.txt`;
+- **Comando de inicialização:** `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+
+&emsp;O serviço ficou disponível publicamente em:
+
+~~~text
+https://pier-test-websocket.onrender.com
+~~~
+
+Com isso, os clientes móveis puderam se conectar ao endpoint WebSocket por meio de:
+
+~~~text
+wss://pier-test-websocket.onrender.com/ws/frames
+~~~
+
+&emsp;Esse deploy foi importante porque aproximou o teste do cenário real do projeto: o celular próximo ao drone envia imagens para um backend remoto, hospedado fora da rede local.
+
+---
+
+### Resultado da validação inicial
+
+&emsp;A validação demonstrou que a arquitetura proposta é tecnicamente viável para o envio de frames de um dispositivo móvel para um backend remoto.
+
+&emsp;O backend conseguiu:
+
+- receber frames por WebSocket;
+- validar campos obrigatórios;
+- armazenar os últimos frames em buffer;
+- retornar metadados dos frames recebidos;
+- disponibilizar a última imagem recebida;
+- simular consulta de sinistro por placa;
+- operar em ambiente remoto via Render.
+
+&emsp;Os clientes móveis conseguiram:
+
+- capturar ou ler imagens no celular;
+- converter imagens para base64;
+- montar payloads estruturados;
+- enviar frames para o backend remoto;
+- receber confirmação de entrega.
+
+&emsp;Com isso, a etapa de transmissão de imagem foi parcialmente validada na prática.
+
+&emsp;No entanto, essa validação ainda não comprova a integração completa com o DJI Tello. Ela comprova principalmente o trecho entre o celular e o backend remoto.
+
+---
+
+## Desafios encontrados nos testes
+
+&emsp;Após iniciar os testes, o grupo encontrou desafios que não estavam totalmente claros apenas na etapa de pesquisa. Esses problemas surgiram justamente ao tentar aproximar a arquitetura do cenário real de uso com o DJI Tello.
+
+### Conflito de interfaces de rede
+
+&emsp;O maior desafio técnico está na gestão das interfaces de rede do dispositivo móvel.
+
+&emsp;O DJI Tello opera nativamente em modo **Access Point**, ou seja, ele cria sua própria rede Wi-Fi. Para receber vídeo e controlar o drone, o celular precisa se conectar a essa rede. O problema é que, ao detectar uma conexão Wi-Fi ativa, muitos sistemas operacionais móveis priorizam automaticamente o Wi-Fi como rota principal de saída para a internet.
+
+&emsp;Como a rede Wi-Fi do drone não possui acesso externo, o celular pode entrar em um estado de isolamento: ele continua recebendo o sinal do drone, mas não consegue enviar os dados para o backend remoto hospedado na nuvem.
+
+&emsp;Em termos práticos, isso quebra o papel do celular como gateway, pois o dispositivo passa a estar conectado ao drone, mas desconectado da internet.
+
+&emsp;Esse conflito é especialmente relevante porque a arquitetura proposta depende de duas comunicações simultâneas:
+
+1. comunicação local com o drone via Wi-Fi;
+2. comunicação externa com o backend via 4G/5G.
+
+&emsp;Quando o sistema operacional não permite ou não roteia corretamente essas duas conexões, o fluxo em tempo quase real fica comprometido.
+
+---
+
+### Restrições do navegador e do ambiente web
+
+&emsp;Além da barreira de rede, também foram identificadas limitações ao tentar utilizar uma interface HTML como solução principal para comunicação com o drone.
+
+&emsp;O vídeo do DJI Tello é transmitido por pacotes UDP, protocolo comum em transmissões de vídeo de baixa latência. Porém, navegadores móveis não oferecem acesso direto e livre a sockets UDP por meio de JavaScript, principalmente por questões de segurança.
+
+&emsp;Isso cria uma limitação importante: mesmo que uma página web consiga acessar a câmera do celular e enviar frames ao backend, ela não consegue, por si só, acessar diretamente o fluxo UDP vindo do drone.
+
+&emsp;Além disso, navegadores operam dentro de um ambiente controlado que limita o acesso da página web a recursos sensíveis do sistema operacional e da rede local. Essas restrições reduzem a capacidade do navegador de atuar como uma ponte completa entre o hardware do drone e o backend remoto.
+
+&emsp;Dessa forma, a solução baseada apenas em HTML é útil para validar o envio de imagens do celular para o backend, mas não resolve sozinha a integração direta com o stream real do DJI Tello.
+
+---
+
+### Fragmentação entre sistemas operacionais móveis
+
+&emsp;A viabilidade técnica do gateway móvel varia conforme o sistema operacional utilizado.
+
+&emsp;No **Android**, existe maior flexibilidade para executar scripts, acessar arquivos do armazenamento local e instalar ferramentas como o Termux. Isso torna o Android uma plataforma interessante para testes com Python, OpenCV e WebSocket.
+
+&emsp;Por outro lado, os dispositivos Android testados apresentaram dificuldade para manter, de forma estável, o uso simultâneo do Wi-Fi do drone e dos dados móveis. Em determinados aparelhos, ao conectar-se ao Wi-Fi do DJI Tello, o sistema desativa ou deixa de utilizar corretamente a rota de internet via 4G/5G.
+
+&emsp;No **iOS**, os dispositivos apresentaram melhor gerenciamento entre Wi-Fi sem internet e dados móveis. Entretanto, o ecossistema é mais restritivo para execução de scripts de baixo nível, instalação de bibliotecas externas e acesso direto a recursos de rede. Isso dificulta a criação de uma ponte programável usando Python ou ferramentas equivalentes.
+
+&emsp;Portanto, o grupo ainda não encontrou uma solução única e garantida para todos os celulares. A escolha do dispositivo de teste impacta diretamente a viabilidade da arquitetura.
+
+---
+
+### Dependência de ambiente de execução no celular
+
+&emsp;Para que o celular atue como gateway real entre o DJI Tello e o backend, ele precisa executar uma lógica local capaz de:
+
+- receber ou acessar frames vindos do drone;
+- manipular imagens;
+- converter frames para um formato transmissível;
+- abrir conexão com o backend;
+- enviar dados continuamente;
+- tratar falhas e reconexões.
+
+&emsp;Esse tipo de lógica normalmente exige um ambiente mais flexível do que um navegador comum. No Android, o Termux aparece como uma alternativa viável para executar scripts Python e instalar bibliotecas de rede e processamento de imagem. Porém, essa abordagem exige configurações adicionais no celular, permissões de armazenamento e ajustes de economia de bateria.
+
+&emsp;Além disso, nem todos os recursos necessários podem estar disponíveis de forma simples no ambiente mobile. Bibliotecas como OpenCV, WebSocket clients e ferramentas de captura podem exigir instalação manual, compatibilidade com a arquitetura do aparelho e testes específicos.
+
+&emsp;Essa dependência de ambiente de execução é um gargalo importante porque aumenta a complexidade operacional do MVP. O celular deixa de ser apenas um dispositivo de controle e passa a exigir configuração técnica para funcionar como gateway.
+
+---
+
+### Limitações observadas no teste inicial
+
+&emsp;Além dos desafios de rede e ambiente mobile, o teste inicial possui limitações próprias.
+
+&emsp;A principal limitação é que ele valida o envio de imagens do celular para o backend, mas ainda não valida o fluxo completo com o DJI Tello capturando o vídeo em tempo real.
+
+&emsp;Também foram identificadas outras limitações:
+
+- o cliente web usa a câmera do próprio celular, não diretamente a câmera do drone;
+- o script Termux depende de imagens previamente salvas em uma pasta;
+- a transmissão ainda não foi testada em voo real;
+- a geolocalização usada é a do celular, não do drone;
+- o backend ainda não executa YOLO e OCR nesse fluxo de teste;
+- o envio em base64 aumenta o tamanho dos dados transmitidos;
+- a estabilidade depende da qualidade da rede móvel;
+- formatos como `.heic` podem exigir conversão antes do envio;
+- a comunicação simultânea entre Wi-Fi do drone e 4G/5G ainda precisa ser validada em diferentes dispositivos.
+
+&emsp;Essas limitações não invalidam o teste, mas deixam claro que ele representa uma validação incremental da arquitetura, e não a versão final da solução.
+
+---
+
+## Possíveis soluções para os desafios
+
+&emsp;Diante dos obstáculos encontrados nos testes, o grupo mapeou caminhos técnicos que podem restabelecer ou melhorar o fluxo de dados entre o drone, o celular e o backend remoto.
+
+&emsp;Essas alternativas ainda precisam ser testadas de forma incremental, mas ajudam a orientar os próximos passos do projeto.
+
+---
+
+### Uso de aplicativos de terminal no Android
+
+&emsp;Uma das frentes de solução consiste em utilizar ambientes de terminal no celular, principalmente no Android, para contornar as restrições do navegador.
+
+&emsp;Nesse cenário, o celular executaria um script Python responsável por:
+
+- conectar-se à rede Wi-Fi do DJI Tello;
+- receber ou acessar os dados de vídeo;
+- extrair frames;
+- converter as imagens para JPEG/base64;
+- enviar os frames para o backend via WebSocket;
+- monitorar falhas de conexão;
+- tentar reconexão automática quando necessário.
+
+&emsp;Essa abordagem é mais flexível do que uma solução puramente web, porque o script pode utilizar bibliotecas específicas de rede e visão computacional. Também permite maior controle sobre arquivos, formatos de imagem e envio de dados.
+
+&emsp;No entanto, essa alternativa ainda depende da capacidade do celular de manter a conexão com o drone e, ao mesmo tempo, utilizar a rede móvel para comunicação externa. Por isso, ela precisa ser validada em dispositivos reais, considerando diferenças entre modelos Android, versões do sistema operacional e configurações de economia de bateria.
+
+---
+
+### Alteração do modo de rede do drone
+
+&emsp;Outra possibilidade técnica é alterar a forma como o drone participa da rede.
+
+&emsp;O DJI Tello opera originalmente como Access Point, criando sua própria rede Wi-Fi. Uma solução mais robusta seria fazer com que o drone deixasse de ser o ponto central da rede e passasse a se conectar a uma rede já existente, em um comportamento semelhante ao chamado **modo Station**.
+
+&emsp;Nesse cenário, o drone e o dispositivo gateway estariam conectados à mesma rede local. Isso poderia reduzir o conflito de interfaces, pois o celular não precisaria necessariamente se conectar a uma rede isolada sem internet.
+
+&emsp;A arquitetura ficaria mais próxima do seguinte fluxo:
+
+~~~text
+Rede local com internet ou hotspot
+   ├── DJI Tello conectado como cliente
+   ├── Celular ou gateway conectado à mesma rede
+   └── Backend remoto acessível via internet
+~~~
+
+&emsp;Essa abordagem tende a ser mais robusta, mas depende da possibilidade real de configurar o DJI Tello nesse modo, da estabilidade dessa configuração e da compatibilidade com as bibliotecas utilizadas para controle e captura de vídeo.
+
+&emsp;Por isso, essa alternativa deve ser tratada como uma frente de investigação técnica, não como premissa garantida do MVP.
+
+---
+
+### Gateway intermediário como alternativa de contingência
+
+&emsp;Caso o celular não consiga cumprir o papel de ponte de forma estável, uma alternativa de contingência é utilizar um dispositivo intermediário próximo ao drone, como um notebook, Raspberry Pi ou outro computador de borda.
+
+&emsp;Esse dispositivo poderia se conectar ao drone, receber o vídeo, processar ou reduzir os frames e enviar os dados ao backend remoto por outra interface de rede.
+
+&emsp;Embora essa alternativa aumente a complexidade operacional e se afaste da ideia inicial de usar apenas o celular, ela pode ser útil caso os testes mostrem que a limitação de rede dos celulares inviabiliza a transmissão contínua.
+
+&emsp;No contexto do MVP, essa opção deve ser considerada como plano de contingência, não como primeira escolha.
+
+---
+
+## Conclusão
+
+&emsp;A pesquisa inicial mostrou que o DJI Tello não possui conexão direta com a internet e que, por isso, seria necessário utilizar um dispositivo intermediário para enviar imagens ao backend remoto. A hipótese mais simples e alinhada ao MVP foi utilizar o celular do operador como gateway de borda.
+
+&emsp;Com base nessa pesquisa, o grupo tomou decisões técnicas para orientar o desenvolvimento: usar WebSocket como canal principal de envio contínuo de frames, trabalhar com imagens JPEG, incluir metadados mínimos em cada payload, manter buffer no backend e processar os frames por janelas.
+
+&emsp;A partir dessas decisões, foi desenvolvido um protótipo com FastAPI, WebSocket, clientes móveis e deploy no Render. Esse teste validou o trecho entre celular e backend remoto, demonstrando que é possível enviar frames, armazená-los em buffer e consultar imagens recebidas.
+
+&emsp;No entanto, ao avançar nos testes, o grupo encontrou desafios importantes: conflito entre Wi-Fi do drone e rede móvel, limitações do navegador para acessar UDP, diferenças entre Android e iOS e dependência de um ambiente de execução mais flexível no celular.
+
+&emsp;Esses desafios mostram que a arquitetura ainda precisa ser validada com o DJI Tello em cenário real. As próximas etapas devem focar em testar o gateway móvel com o drone, investigar o uso de scripts em ambiente Android, avaliar mudanças na configuração de rede do Tello e manter um gateway intermediário como alternativa de contingência.
+
+&emsp;Para o MVP, a decisão arquitetural continua sendo utilizar envio contínuo de frames via WebSocket, com buffer curto e processamento por janelas. Essa abordagem prioriza o objetivo principal da frente de transmissão: garantir que o backend receba imagens suficientes para que o sistema de visão computacional consiga identificar placas com maior confiabilidade.
+
+---
+
+# Referências
+
+DT NETWORK. Como usar Wi-Fi e dados móveis ao mesmo tempo? Disponível em: https://dtnetwork.com.br/blog/wi-fi-e-dados-moveis/. Acesso em: 07 maio 2026.
+
+RTC LEAGUE. What is WebRTC. Disponível em: https://rtcleague.com/blogs/what-is-webrtc. Acesso em: 07 maio 2026.
+
+WEBSOCKET. WebSocket API. Disponível em: https://websocket.org/reference/websocket-api/#_top. Acesso em: 08 maio 2026.
+
+ANT MEDIA. Maximizing Your Skills: WebRTC vs WebSockets Explained. Disponível em: https://notebooklm.google.com/notebook/74f798d9-523e-4578-9089-229aab24974c. Acesso em: 08 maio 2026.

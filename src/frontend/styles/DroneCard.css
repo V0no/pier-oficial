@@ -1,0 +1,265 @@
+.drone-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  width: 290px;
+}
+
+/* Image area */
+.drone-card__image-wrap {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: #E5E7EB;
+}
+
+.drone-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Online / Offline badge */
+.drone-card__status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.drone-card__status--online {
+  background: #16A34A;
+}
+
+.drone-card__status--offline {
+  background: rgba(55, 65, 81, 0.82);
+}
+
+.drone-card__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ADE80;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Content */
+.drone-card__content {
+  padding: 16px;
+}
+
+.drone-card__name {
+  font-size: 17px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 2px;
+}
+
+.drone-card__model {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0 0 12px;
+}
+
+/* Info list */
+.drone-card__info {
+  list-style: none;
+  padding: 12px 0 0;
+  margin: 0 0 16px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.drone-card__info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 13px;
+}
+
+.drone-card__info-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6B7280;
+}
+
+.drone-card__info-value {
+  color: #111827;
+}
+
+.drone-card__info-value--low {
+  color: #EF4444;
+  font-weight: 700;
+}
+
+.drone-card__info-value--strong {
+  color: #16A34A;
+  font-weight: 700;
+}
+
+.drone-card__info-value--weak {
+  color: #EF4444;
+  font-weight: 700;
+}
+
+/* Buttons */
+.drone-card__btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.drone-card__btn--connect {
+  background: #C41D6F;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.drone-card__btn--connect:hover {
+  background: #a8175c;
+}
+
+.drone-card__btn--unavailable {
+  background: transparent;
+  color: #6B7280;
+  border: 1px solid #D1D5DB;
+  cursor: not-allowed;
+}
+
+/* ── CSS-only icons ── */
+
+/* Battery */
+.icon-battery {
+  display: inline-flex;
+  align-items: center;
+  width: 16px;
+  height: 10px;
+  border: 1.5px solid #9CA3AF;
+  border-radius: 2px;
+  padding: 1.5px;
+  position: relative;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.icon-battery::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 5px;
+  background: #9CA3AF;
+  border-radius: 0 1px 1px 0;
+}
+
+.icon-battery__fill {
+  flex: 1;
+  height: 100%;
+  background: #9CA3AF;
+  border-radius: 1px;
+}
+
+/* Signal bars */
+.icon-signal {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 14px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.icon-signal span {
+  flex: 1;
+  background: #9CA3AF;
+  border-radius: 1px 1px 0 0;
+}
+
+.icon-signal span:nth-child(1) { height: 30%; }
+.icon-signal span:nth-child(2) { height: 55%; }
+.icon-signal span:nth-child(3) { height: 80%; }
+.icon-signal span:nth-child(4) { height: 100%; }
+
+/* Base (2×2 grid) */
+.icon-base {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.icon-base span {
+  background: #9CA3AF;
+  border-radius: 1px;
+}
+
+/* Lock */
+.icon-lock {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 14px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.icon-lock__shackle {
+  width: 8px;
+  height: 6px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px 4px 0 0;
+  border-bottom: none;
+}
+
+.icon-lock__body {
+  width: 13px;
+  height: 9px;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+/* Offline X */
+.icon-offline {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.icon-offline::before,
+.icon-offline::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.icon-offline::before { transform: translate(-50%, -50%) rotate(45deg); }
+.icon-offline::after  { transform: translate(-50%, -50%) rotate(-45deg); }
