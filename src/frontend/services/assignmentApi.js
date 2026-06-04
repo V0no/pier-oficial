@@ -1,7 +1,8 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const API_BASE_PATH = API_BASE_URL + "/api";
 
 export async function getDrones() {
-  const response = await fetch(`${API_BASE_URL}/drones`);
+  const response = await fetch(`${API_BASE_PATH}/drones`);
 
   if (!response.ok) {
     throw new Error('Erro ao buscar drones');
@@ -11,7 +12,7 @@ export async function getDrones() {
 }
 
 export async function getOperators() {
-  const response = await fetch(`${API_BASE_URL}/operators`);
+  const response = await fetch(`${API_BASE_PATH}/operators`);
 
   if (!response.ok) {
     throw new Error('Erro ao buscar operadores');
@@ -21,7 +22,7 @@ export async function getOperators() {
 }
 
 export async function getAssignments() {
-  const response = await fetch(`${API_BASE_URL}/assignments`);
+  const response = await fetch(`${API_BASE_PATH}/assignments`);
 
   if (!response.ok) {
     throw new Error('Erro ao buscar atribuições');
@@ -31,7 +32,7 @@ export async function getAssignments() {
 }
 
 export async function createAssignment(userId, droneId) {
-  const response = await fetch(`${API_BASE_URL}/assignments`, {
+  const response = await fetch(`${API_BASE_PATH}/assignments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ export async function createAssignment(userId, droneId) {
 }
 
 export async function unassignDrone(assignmentId) {
-  const response = await fetch(`${API_BASE_URL}/assignments/${assignmentId}/unassign`, {
+  const response = await fetch(`${API_BASE_PATH}/assignments/${assignmentId}/unassign`, {
     method: 'PATCH',
   });
 
